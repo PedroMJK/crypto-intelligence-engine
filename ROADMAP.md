@@ -4,194 +4,194 @@
 
 Legenda:
 
-- [ ] Não iniciado
-- [x] Concluído
-- [~] Em andamento
+* [ ] Not started
+* [x] Completed
+* [~] In progress
 
 ---
 
-# Fase 0 — Planejamento
+# Phase 0 — Planning
 
-- [x] Definir objetivo geral
-- [x] Definir arquitetura conceitual
-- [x] Definir tecnologias iniciais
-- [x] Definir estratégia de validação
-- [~] Criar documentação inicial
-
----
-
-# Fase 1 — Fundação
-
-- [x] Criar ambiente virtual Python
-- [x] Definir versão do Python
-- [x] Criar requirements.txt
-- [x] Criar .gitignore
-- [ ] Criar .env.example
-- [ ] Criar estrutura de pastas
-- [ ] Inicializar Git
-- [ ] Criar configuração central
-- [ ] Configurar logging
-- [ ] Configurar testes
-- [ ] Criar primeiro teste
+* [x] Define general objective
+* [x] Define conceptual architecture
+* [x] Define initial technologies
+* [x] Define validation strategy
+* [x] Create initial documentation
 
 ---
 
-# Fase 2 — Market Data Engine
+# Phase 1 — Foundation
 
-- [ ] Criar cliente de dados
-- [ ] Conectar WebSocket
-- [ ] Receber trades
-- [ ] Receber ticker
-- [ ] Receber candles
-- [ ] Receber order book
-- [ ] Implementar reconexão
-- [ ] Implementar tratamento de erros
-- [ ] Implementar backpressure
-- [ ] Criar buffers de dados
-
----
-
-# Fase 3 — Scanner
-
-- [ ] Obter lista de pares
-- [ ] Filtrar pares relevantes
-- [ ] Criar filtro por preço
-- [ ] Criar filtro por liquidez
-- [ ] Criar filtro por volume
-- [ ] Criar filtro por atividade
-- [ ] Criar ranking
+* [x] Create Python virtual environment
+* [x] Define Python version
+* [x] Create requirements.txt
+* [x] Create .gitignore
+* [x] Create .env.example
+* [x] Create project folder structure
+* [x] Initialize Git
+* [x] Create centralized configuration
+* [ ] Configure logging
+* [x] Configure tests
+* [x] Create first test
 
 ---
 
-# Fase 4 — Market Pressure Engine
+# Phase 2 — Market Data Engine
 
-- [ ] Buy volume
-- [ ] Sell volume
-- [ ] Buy/Sell ratio
-- [ ] Volume delta
-- [ ] Trades por segundo
-- [ ] Price velocity
-- [ ] Price acceleration
-- [ ] Volume anomaly
-- [ ] Pressure score
-- [ ] Pressure transition
-
----
-
-# Fase 5 — Análise avançada
-
-- [ ] Indicadores técnicos
-- [ ] Market structure
-- [ ] Suporte e resistência
-- [ ] Volatilidade
-- [ ] Order book imbalance
-- [ ] Multi-timeframe
-- [ ] Market regime
-- [ ] Anomaly detection
+* [ ] Create market data client
+* [ ] Connect WebSocket
+* [ ] Receive trades
+* [ ] Receive ticker
+* [ ] Receive candles
+* [ ] Receive order book
+* [ ] Implement reconnection
+* [ ] Implement error handling
+* [ ] Implement backpressure
+* [ ] Create data buffers
 
 ---
 
-# Fase 6 — Intelligence Engine
+# Phase 3 — Scanner
 
-- [ ] Score técnico
-- [ ] Score de fluxo
-- [ ] Score de momentum
-- [ ] Score de volume
-- [ ] Score de estrutura
-- [ ] Confidence engine
-- [ ] Contradiction engine
-- [ ] Ensemble engine
-
----
-
-# Fase 7 — Prediction Lab
-
-- [ ] Registrar análises
-- [ ] Registrar previsões
-- [ ] Salvar features
-- [ ] Avaliar resultado após 1 minuto
-- [ ] Avaliar resultado após 5 minutos
-- [ ] Avaliar resultado após 15 minutos
-- [ ] Avaliar resultado após 30 minutos
-- [ ] Calcular métricas
-- [ ] Criar relatório estatístico
+* [ ] Get trading pairs
+* [ ] Filter relevant pairs
+* [ ] Create price filter
+* [ ] Create liquidity filter
+* [ ] Create volume filter
+* [ ] Create activity filter
+* [ ] Create ranking
 
 ---
 
-# Fase 8 — Backtesting
+# Phase 4 — Market Pressure Engine
 
-- [ ] Criar dataset
-- [ ] Criar simulador
-- [ ] Evitar look-ahead bias
-- [ ] Calcular accuracy
-- [ ] Calcular precision
-- [ ] Calcular recall
-- [ ] Calcular matriz de confusão
-- [ ] Comparar modelos
-
----
-
-# Fase 9 — Machine Learning
-
-- [ ] Criar feature pipeline
-- [ ] Preparar dataset
-- [ ] Separar treino/validação/teste
-- [ ] Criar baseline
-- [ ] Random Forest
-- [ ] XGBoost
-- [ ] LightGBM
-- [ ] Calibração de probabilidades
-- [ ] Comparar com regras tradicionais
-- [ ] Criar ensemble
+* [ ] Buy volume
+* [ ] Sell volume
+* [ ] Buy/Sell ratio
+* [ ] Volume delta
+* [ ] Trades per second
+* [ ] Price velocity
+* [ ] Price acceleration
+* [ ] Volume anomaly
+* [ ] Pressure score
+* [ ] Pressure transition
 
 ---
 
-# Fase 10 — Paper Trading
+# Phase 5 — Advanced Analysis
 
-- [ ] Criar simulador de posições
-- [ ] Registrar entradas simuladas
-- [ ] Registrar saídas simuladas
-- [ ] Simular taxas
-- [ ] Simular slippage
-- [ ] Criar métricas de desempenho
-
----
-
-# Fase 11 — API
-
-- [ ] FastAPI
-- [ ] Endpoints
-- [ ] WebSocket interno
-- [ ] Health check
-- [ ] Documentação
+* [ ] Technical indicators
+* [ ] Market structure
+* [ ] Support and resistance
+* [ ] Volatility
+* [ ] Order book imbalance
+* [ ] Multi-timeframe analysis
+* [ ] Market regime
+* [ ] Anomaly detection
 
 ---
 
-# Fase 12 — Dashboard
+# Phase 6 — Intelligence Engine
 
-- [ ] React
-- [ ] TypeScript
-- [ ] Tailwind
-- [ ] Scanner
-- [ ] Tela de ativo
-- [ ] Market Pressure
-- [ ] Prediction Lab
-- [ ] Histórico
-- [ ] Gráficos
-
----
-
-# Fase 13 — Infraestrutura
-
-- [ ] Docker
-- [ ] Docker Compose
-- [ ] CI
-- [ ] Testes automatizados
-- [ ] Deploy de ambiente de testes
-- [ ] Monitoramento
+* [ ] Technical score
+* [ ] Flow score
+* [ ] Momentum score
+* [ ] Volume score
+* [ ] Structure score
+* [ ] Confidence engine
+* [ ] Contradiction engine
+* [ ] Ensemble engine
 
 ---
 
-# Próxima tarefa
+# Phase 7 — Prediction Lab
 
-Criar e configurar o ambiente Python.
+* [ ] Register analyses
+* [ ] Register predictions
+* [ ] Save features
+* [ ] Evaluate result after 1 minute
+* [ ] Evaluate result after 5 minutes
+* [ ] Evaluate result after 15 minutes
+* [ ] Evaluate result after 30 minutes
+* [ ] Calculate metrics
+* [ ] Create statistical report
+
+---
+
+# Phase 8 — Backtesting
+
+* [ ] Create dataset
+* [ ] Create simulator
+* [ ] Prevent look-ahead bias
+* [ ] Calculate accuracy
+* [ ] Calculate precision
+* [ ] Calculate recall
+* [ ] Calculate confusion matrix
+* [ ] Compare models
+
+---
+
+# Phase 9 — Machine Learning
+
+* [ ] Create feature pipeline
+* [ ] Prepare dataset
+* [ ] Split training/validation/test datasets
+* [ ] Create baseline
+* [ ] Random Forest
+* [ ] XGBoost
+* [ ] LightGBM
+* [ ] Probability calibration
+* [ ] Compare with traditional rules
+* [ ] Create ensemble
+
+---
+
+# Phase 10 — Paper Trading
+
+* [ ] Create position simulator
+* [ ] Register simulated entries
+* [ ] Register simulated exits
+* [ ] Simulate fees
+* [ ] Simulate slippage
+* [ ] Create performance metrics
+
+---
+
+# Phase 11 — API
+
+* [ ] FastAPI
+* [ ] Endpoints
+* [ ] Internal WebSocket
+* [ ] Health check
+* [ ] API documentation
+
+---
+
+# Phase 12 — Dashboard
+
+* [ ] React
+* [ ] TypeScript
+* [ ] Tailwind
+* [ ] Scanner
+* [ ] Asset details
+* [ ] Market Pressure
+* [ ] Prediction Lab
+* [ ] History
+* [ ] Charts
+
+---
+
+# Phase 13 — Infrastructure
+
+* [ ] Docker
+* [ ] Docker Compose
+* [ ] CI
+* [ ] Automated tests
+* [ ] Test environment deployment
+* [ ] Monitoring
+
+---
+
+# Current Task
+
+Configure application logging.
