@@ -30,7 +30,7 @@ Legenda:
 * [x] Create project folder structure
 * [x] Initialize Git
 * [x] Create centralized configuration
-* [ ] Configure logging
+* [x] Configure logging
 * [x] Configure tests
 * [x] Create first test
 
@@ -194,4 +194,4 @@ Legenda:
 
 # Current Task
 
-Configure application logging.
+Create market data client.
