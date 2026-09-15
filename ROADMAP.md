@@ -44,10 +44,17 @@ Legenda:
 * [ ] Receive ticker
 * [ ] Receive candles
 * [ ] Receive order book
+* [ ] Validate incoming messages
+* [ ] Track event timestamps
+* [ ] Detect duplicated events
+* [ ] Detect out-of-order events
 * [ ] Implement reconnection
+* [ ] Implement exponential backoff
 * [ ] Implement error handling
 * [ ] Implement backpressure
 * [ ] Create data buffers
+* [ ] Track dropped messages
+* [ ] Track processing latency
 
 ---
 
