@@ -103,3 +103,28 @@ async def test_receive_candle_returns_message_from_symbol_interval_stream():
         "wss://fstream.binance.com/ws/btcusdt@kline_1m"
     ]
     assert message == '{"e":"kline","s":"BTCUSDT"}'
+
+
+@pytest.mark.asyncio
+async def test_receive_order_book_returns_message_from_symbol_stream():
+    received_urls = []
+
+    class MockConnection:
+        async def recv(self):
+            return '{"e":"depthUpdate","s":"BTCUSDT"}'
+
+    async def mock_connect(url: str):
+        received_urls.append(url)
+        return MockConnection()
+
+    client = MarketWebSocketClient(
+        base_url="wss://fstream.binance.com",
+        connector=mock_connect,
+    )
+
+    message = await client.receive_order_book("BTCUSDT")
+
+    assert received_urls == [
+        "wss://fstream.binance.com/ws/btcusdt@depth"
+    ]
+    assert message == '{"e":"depthUpdate","s":"BTCUSDT"}'
