@@ -39,3 +39,11 @@ class MarketWebSocketClient:
         )
 
         return await connection.recv()
+
+    async def receive_order_book(self, symbol: str):
+        stream_name = f"{symbol.lower()}@depth"
+        connection = await self.connector(
+            f"{self.base_url}/ws/{stream_name}"
+        )
+
+        return await connection.recv()
