@@ -15,3 +15,11 @@ class MarketWebSocketClient:
 
     async def connect(self):
         return await self.connector(self.base_url)
+
+    async def receive_trade(self, symbol: str):
+        stream_name = f"{symbol.lower()}@aggTrade"
+        connection = await self.connector(
+            f"{self.base_url}/ws/{stream_name}"
+        )
+
+        return await connection.recv()
