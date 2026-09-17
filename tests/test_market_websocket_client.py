@@ -53,3 +53,28 @@ async def test_receive_trade_returns_message_from_symbol_stream():
         "wss://fstream.binance.com/ws/btcusdt@aggTrade"
     ]
     assert message == '{"e":"aggTrade","s":"BTCUSDT"}'
+
+
+@pytest.mark.asyncio
+async def test_receive_ticker_returns_message_from_symbol_stream():
+    received_urls = []
+
+    class MockConnection:
+        async def recv(self):
+            return '{"e":"24hrMiniTicker","s":"BTCUSDT"}'
+
+    async def mock_connect(url: str):
+        received_urls.append(url)
+        return MockConnection()
+
+    client = MarketWebSocketClient(
+        base_url="wss://fstream.binance.com",
+        connector=mock_connect,
+    )
+
+    message = await client.receive_ticker("BTCUSDT")
+
+    assert received_urls == [
+        "wss://fstream.binance.com/ws/btcusdt@miniTicker"
+    ]
+    assert message == '{"e":"24hrMiniTicker","s":"BTCUSDT"}'
