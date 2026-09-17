@@ -5,9 +5,9 @@ def test_application_name():
     assert settings.app_name == "Crypto Intelligence Engine"
 
 
-def test_binance_urls_are_configured():
-    assert settings.binance_rest_url.startswith("https://")
-    assert settings.binance_ws_url.startswith("wss://")
+def test_binance_futures_urls_are_configured():
+    assert settings.binance_rest_url == "https://fapi.binance.com"
+    assert settings.binance_ws_url == "wss://fstream.binance.com"
 
 
 def test_mongodb_configuration_exists():
