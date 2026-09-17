@@ -23,3 +23,11 @@ class MarketWebSocketClient:
         )
 
         return await connection.recv()
+
+    async def receive_ticker(self, symbol: str):
+        stream_name = f"{symbol.lower()}@miniTicker"
+        connection = await self.connector(
+            f"{self.base_url}/ws/{stream_name}"
+        )
+
+        return await connection.recv()
