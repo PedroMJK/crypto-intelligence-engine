@@ -42,7 +42,7 @@ Legenda:
 * [x] Connect WebSocket
 * [x] Receive trades
 * [x] Receive ticker
-* [ ] Receive candles
+* [x] Receive candles
 * [ ] Receive order book
 * [ ] Validate incoming messages
 * [ ] Track event timestamps
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Receive candles.
+Receive order book.
