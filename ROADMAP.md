@@ -43,7 +43,7 @@ Legenda:
 * [x] Receive trades
 * [x] Receive ticker
 * [x] Receive candles
-* [ ] Receive order book
+* [x] Receive order book
 * [ ] Validate incoming messages
 * [ ] Track event timestamps
 * [ ] Detect duplicated events
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Receive order book.
+Validate incoming messages.
