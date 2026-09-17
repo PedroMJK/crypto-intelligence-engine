@@ -10,8 +10,8 @@ class Settings(BaseSettings):
     mongodb_uri: str = "mongodb://localhost:27017"
     mongodb_database: str = "crypto_intelligence"
 
-    binance_rest_url: str = "https://api.binance.com"
-    binance_ws_url: str = "wss://stream.binance.com:9443"
+    binance_rest_url: str = "https://fapi.binance.com"
+    binance_ws_url: str = "wss://fstream.binance.com"
 
     model_config = SettingsConfigDict(
         env_file=".env",
