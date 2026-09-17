@@ -38,7 +38,7 @@ Legenda:
 
 # Phase 2 — Market Data Engine
 
-* [ ] Create market data client
+* [x] Create market data client
 * [ ] Connect WebSocket
 * [ ] Receive trades
 * [ ] Receive ticker
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Create market data client.
+Connect WebSocket.
