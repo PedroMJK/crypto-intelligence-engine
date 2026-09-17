@@ -40,7 +40,7 @@ Legenda:
 
 * [x] Create market data client
 * [x] Connect WebSocket
-* [ ] Receive trades
+* [x] Receive trades
 * [ ] Receive ticker
 * [ ] Receive candles
 * [ ] Receive order book
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Receive trades.
+Receive ticker.
