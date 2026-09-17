@@ -31,3 +31,11 @@ class MarketWebSocketClient:
         )
 
         return await connection.recv()
+
+    async def receive_candle(self, symbol: str, interval: str):
+        stream_name = f"{symbol.lower()}@kline_{interval}"
+        connection = await self.connector(
+            f"{self.base_url}/ws/{stream_name}"
+        )
+
+        return await connection.recv()
