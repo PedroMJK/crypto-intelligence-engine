@@ -31,6 +31,54 @@ async def test_connect_uses_configured_websocket_url():
 
 
 @pytest.mark.asyncio
+async def test_connect_reconnects_after_connection_failure():
+    connection_attempts = []
+
+    async def mock_connect(url: str):
+        connection_attempts.append(url)
+
+        if len(connection_attempts) == 1:
+            raise ConnectionError("Connection failed")
+
+        return "reconnected"
+
+    client = MarketWebSocketClient(
+        base_url="wss://fstream.binance.com",
+        connector=mock_connect,
+    )
+
+    connection = await client.connect()
+
+    assert connection_attempts == [
+        "wss://fstream.binance.com",
+        "wss://fstream.binance.com",
+    ]
+    assert connection == "reconnected"
+
+
+@pytest.mark.asyncio
+async def test_connect_raises_after_reconnection_failure():
+    connection_attempts = []
+
+    async def mock_connect(url: str):
+        connection_attempts.append(url)
+        raise ConnectionError("Connection failed")
+
+    client = MarketWebSocketClient(
+        base_url="wss://fstream.binance.com",
+        connector=mock_connect,
+    )
+
+    with pytest.raises(ConnectionError, match="Connection failed"):
+        await client.connect()
+
+    assert connection_attempts == [
+        "wss://fstream.binance.com",
+        "wss://fstream.binance.com",
+    ]
+
+
+@pytest.mark.asyncio
 async def test_receive_trade_returns_message_from_symbol_stream():
     received_urls = []
 
@@ -51,6 +99,36 @@ async def test_receive_trade_returns_message_from_symbol_stream():
 
     assert received_urls == [
         "wss://fstream.binance.com/ws/btcusdt@aggTrade"
+    ]
+    assert message == '{"e":"aggTrade","s":"BTCUSDT"}'
+
+
+@pytest.mark.asyncio
+async def test_receive_trade_reconnects_after_connection_failure():
+    connection_attempts = []
+
+    class MockConnection:
+        async def recv(self):
+            return '{"e":"aggTrade","s":"BTCUSDT"}'
+
+    async def mock_connect(url: str):
+        connection_attempts.append(url)
+
+        if len(connection_attempts) == 1:
+            raise ConnectionError("Connection failed")
+
+        return MockConnection()
+
+    client = MarketWebSocketClient(
+        base_url="wss://fstream.binance.com",
+        connector=mock_connect,
+    )
+
+    message = await client.receive_trade("BTCUSDT")
+
+    assert connection_attempts == [
+        "wss://fstream.binance.com/ws/btcusdt@aggTrade",
+        "wss://fstream.binance.com/ws/btcusdt@aggTrade",
     ]
     assert message == '{"e":"aggTrade","s":"BTCUSDT"}'
 
