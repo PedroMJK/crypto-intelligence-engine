@@ -50,7 +50,7 @@ Legenda:
 * [x] Detect out-of-order events
 * [x] Implement reconnection
 * [x] Implement exponential backoff
-* [ ] Implement error handling
+* [x] Implement error handling
 * [ ] Implement backpressure
 * [ ] Create data buffers
 * [ ] Track dropped messages
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Implement error handling.
+Implement backpressure.
