@@ -49,7 +49,7 @@ Legenda:
 * [x] Detect duplicated events
 * [x] Detect out-of-order events
 * [x] Implement reconnection
-* [ ] Implement exponential backoff
+* [x] Implement exponential backoff
 * [ ] Implement error handling
 * [ ] Implement backpressure
 * [ ] Create data buffers
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Implement exponential backoff.
+Implement error handling.
