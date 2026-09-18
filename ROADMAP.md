@@ -48,7 +48,7 @@ Legenda:
 * [x] Track event timestamps
 * [x] Detect duplicated events
 * [x] Detect out-of-order events
-* [ ] Implement reconnection
+* [x] Implement reconnection
 * [ ] Implement exponential backoff
 * [ ] Implement error handling
 * [ ] Implement backpressure
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Implement reconnection.
+Implement exponential backoff.
