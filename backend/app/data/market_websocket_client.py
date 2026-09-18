@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import Callable
 from typing import Any
 
@@ -9,15 +10,28 @@ class MarketWebSocketClient:
         self,
         base_url: str,
         connector: Callable[..., Any] = websockets.connect,
+        sleeper: Callable[..., Any] = asyncio.sleep,
+        max_reconnect_attempts: int = 3,
+        initial_backoff: float = 1.0,
     ):
         self.base_url = base_url.rstrip("/")
         self.connector = connector
+        self.sleeper = sleeper
+        self.max_reconnect_attempts = max_reconnect_attempts
+        self.initial_backoff = initial_backoff
 
     async def _connect_with_reconnection(self, url: str):
-        try:
-            return await self.connector(url)
-        except ConnectionError:
-            return await self.connector(url)
+        backoff_delay = self.initial_backoff
+
+        for attempt in range(self.max_reconnect_attempts + 1):
+            try:
+                return await self.connector(url)
+            except ConnectionError:
+                if attempt == self.max_reconnect_attempts:
+                    raise
+
+                await self.sleeper(backoff_delay)
+                backoff_delay *= 2
 
     async def connect(self):
         return await self._connect_with_reconnection(self.base_url)
