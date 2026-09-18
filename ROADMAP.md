@@ -45,7 +45,7 @@ Legenda:
 * [x] Receive candles
 * [x] Receive order book
 * [x] Validate incoming messages
-* [ ] Track event timestamps
+* [x] Track event timestamps
 * [ ] Detect duplicated events
 * [ ] Detect out-of-order events
 * [ ] Implement reconnection
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Track event timestamps.
+Detect duplicated events.
