@@ -46,7 +46,7 @@ Legenda:
 * [x] Receive order book
 * [x] Validate incoming messages
 * [x] Track event timestamps
-* [ ] Detect duplicated events
+* [x] Detect duplicated events
 * [ ] Detect out-of-order events
 * [ ] Implement reconnection
 * [ ] Implement exponential backoff
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Detect duplicated events.
+Detect out-of-order events.
