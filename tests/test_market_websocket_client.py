@@ -42,9 +42,13 @@ async def test_connect_reconnects_after_connection_failure():
 
         return "reconnected"
 
+    async def mock_sleep(delay: float):
+        pass
+
     client = MarketWebSocketClient(
         base_url="wss://fstream.binance.com",
         connector=mock_connect,
+        sleeper=mock_sleep,
     )
 
     connection = await client.connect()
@@ -57,16 +61,87 @@ async def test_connect_reconnects_after_connection_failure():
 
 
 @pytest.mark.asyncio
+async def test_connect_waits_before_reconnection():
+    connection_attempts = []
+    sleep_delays = []
+
+    async def mock_connect(url: str):
+        connection_attempts.append(url)
+
+        if len(connection_attempts) == 1:
+            raise ConnectionError("Connection failed")
+
+        return "reconnected"
+
+    async def mock_sleep(delay: float):
+        sleep_delays.append(delay)
+
+    client = MarketWebSocketClient(
+        base_url="wss://fstream.binance.com",
+        connector=mock_connect,
+        sleeper=mock_sleep,
+    )
+
+    connection = await client.connect()
+
+    assert connection_attempts == [
+        "wss://fstream.binance.com",
+        "wss://fstream.binance.com",
+    ]
+    assert sleep_delays == [1.0]
+    assert connection == "reconnected"
+
+
+@pytest.mark.asyncio
+async def test_connect_uses_exponential_backoff_between_reconnection_attempts():
+    connection_attempts = []
+    sleep_delays = []
+
+    async def mock_connect(url: str):
+        connection_attempts.append(url)
+
+        if len(connection_attempts) < 4:
+            raise ConnectionError("Connection failed")
+
+        return "reconnected"
+
+    async def mock_sleep(delay: float):
+        sleep_delays.append(delay)
+
+    client = MarketWebSocketClient(
+        base_url="wss://fstream.binance.com",
+        connector=mock_connect,
+        sleeper=mock_sleep,
+    )
+
+    connection = await client.connect()
+
+    assert connection_attempts == [
+        "wss://fstream.binance.com",
+        "wss://fstream.binance.com",
+        "wss://fstream.binance.com",
+        "wss://fstream.binance.com",
+    ]
+    assert sleep_delays == [1.0, 2.0, 4.0]
+    assert connection == "reconnected"
+
+
+@pytest.mark.asyncio
 async def test_connect_raises_after_reconnection_failure():
     connection_attempts = []
+    sleep_delays = []
 
     async def mock_connect(url: str):
         connection_attempts.append(url)
         raise ConnectionError("Connection failed")
 
+    async def mock_sleep(delay: float):
+        sleep_delays.append(delay)
+
     client = MarketWebSocketClient(
         base_url="wss://fstream.binance.com",
         connector=mock_connect,
+        sleeper=mock_sleep,
     )
 
     with pytest.raises(ConnectionError, match="Connection failed"):
@@ -75,7 +150,10 @@ async def test_connect_raises_after_reconnection_failure():
     assert connection_attempts == [
         "wss://fstream.binance.com",
         "wss://fstream.binance.com",
+        "wss://fstream.binance.com",
+        "wss://fstream.binance.com",
     ]
+    assert sleep_delays == [1.0, 2.0, 4.0]
 
 
 @pytest.mark.asyncio
@@ -119,9 +197,13 @@ async def test_receive_trade_reconnects_after_connection_failure():
 
         return MockConnection()
 
+    async def mock_sleep(delay: float):
+        pass
+
     client = MarketWebSocketClient(
         base_url="wss://fstream.binance.com",
         connector=mock_connect,
+        sleeper=mock_sleep,
     )
 
     message = await client.receive_trade("BTCUSDT")
