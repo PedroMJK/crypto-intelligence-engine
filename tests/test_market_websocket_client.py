@@ -1,4 +1,5 @@
 import pytest
+from websockets.exceptions import ConnectionClosedError
 
 from backend.app.data.market_websocket_client import MarketWebSocketClient
 
@@ -216,6 +217,44 @@ async def test_receive_trade_reconnects_after_connection_failure():
 
 
 @pytest.mark.asyncio
+async def test_receive_trade_reconnects_after_connection_closes_during_receive():
+    connection_attempts = []
+
+    class ClosedConnection:
+        async def recv(self):
+            raise ConnectionClosedError(None, None)
+
+    class WorkingConnection:
+        async def recv(self):
+            return '{"e":"aggTrade","s":"BTCUSDT"}'
+
+    async def mock_connect(url: str):
+        connection_attempts.append(url)
+
+        if len(connection_attempts) == 1:
+            return ClosedConnection()
+
+        return WorkingConnection()
+
+    async def mock_sleep(delay: float):
+        pass
+
+    client = MarketWebSocketClient(
+        base_url="wss://fstream.binance.com",
+        connector=mock_connect,
+        sleeper=mock_sleep,
+    )
+
+    message = await client.receive_trade("BTCUSDT")
+
+    assert connection_attempts == [
+        "wss://fstream.binance.com/ws/btcusdt@aggTrade",
+        "wss://fstream.binance.com/ws/btcusdt@aggTrade",
+    ]
+    assert message == '{"e":"aggTrade","s":"BTCUSDT"}'
+
+
+@pytest.mark.asyncio
 async def test_receive_ticker_returns_message_from_symbol_stream():
     received_urls = []
 
@@ -236,6 +275,44 @@ async def test_receive_ticker_returns_message_from_symbol_stream():
 
     assert received_urls == [
         "wss://fstream.binance.com/ws/btcusdt@miniTicker"
+    ]
+    assert message == '{"e":"24hrMiniTicker","s":"BTCUSDT"}'
+
+
+@pytest.mark.asyncio
+async def test_receive_ticker_reconnects_after_connection_closes_during_receive():
+    connection_attempts = []
+
+    class ClosedConnection:
+        async def recv(self):
+            raise ConnectionClosedError(None, None)
+
+    class WorkingConnection:
+        async def recv(self):
+            return '{"e":"24hrMiniTicker","s":"BTCUSDT"}'
+
+    async def mock_connect(url: str):
+        connection_attempts.append(url)
+
+        if len(connection_attempts) == 1:
+            return ClosedConnection()
+
+        return WorkingConnection()
+
+    async def mock_sleep(delay: float):
+        pass
+
+    client = MarketWebSocketClient(
+        base_url="wss://fstream.binance.com",
+        connector=mock_connect,
+        sleeper=mock_sleep,
+    )
+
+    message = await client.receive_ticker("BTCUSDT")
+
+    assert connection_attempts == [
+        "wss://fstream.binance.com/ws/btcusdt@miniTicker",
+        "wss://fstream.binance.com/ws/btcusdt@miniTicker",
     ]
     assert message == '{"e":"24hrMiniTicker","s":"BTCUSDT"}'
 
@@ -266,6 +343,44 @@ async def test_receive_candle_returns_message_from_symbol_interval_stream():
 
 
 @pytest.mark.asyncio
+async def test_receive_candle_reconnects_after_connection_closes_during_receive():
+    connection_attempts = []
+
+    class ClosedConnection:
+        async def recv(self):
+            raise ConnectionClosedError(None, None)
+
+    class WorkingConnection:
+        async def recv(self):
+            return '{"e":"kline","s":"BTCUSDT"}'
+
+    async def mock_connect(url: str):
+        connection_attempts.append(url)
+
+        if len(connection_attempts) == 1:
+            return ClosedConnection()
+
+        return WorkingConnection()
+
+    async def mock_sleep(delay: float):
+        pass
+
+    client = MarketWebSocketClient(
+        base_url="wss://fstream.binance.com",
+        connector=mock_connect,
+        sleeper=mock_sleep,
+    )
+
+    message = await client.receive_candle("BTCUSDT", "1m")
+
+    assert connection_attempts == [
+        "wss://fstream.binance.com/ws/btcusdt@kline_1m",
+        "wss://fstream.binance.com/ws/btcusdt@kline_1m",
+    ]
+    assert message == '{"e":"kline","s":"BTCUSDT"}'
+
+
+@pytest.mark.asyncio
 async def test_receive_order_book_returns_message_from_symbol_stream():
     received_urls = []
 
@@ -286,5 +401,43 @@ async def test_receive_order_book_returns_message_from_symbol_stream():
 
     assert received_urls == [
         "wss://fstream.binance.com/ws/btcusdt@depth"
+    ]
+    assert message == '{"e":"depthUpdate","s":"BTCUSDT"}'
+
+
+@pytest.mark.asyncio
+async def test_receive_order_book_reconnects_after_connection_closes_during_receive():
+    connection_attempts = []
+
+    class ClosedConnection:
+        async def recv(self):
+            raise ConnectionClosedError(None, None)
+
+    class WorkingConnection:
+        async def recv(self):
+            return '{"e":"depthUpdate","s":"BTCUSDT"}'
+
+    async def mock_connect(url: str):
+        connection_attempts.append(url)
+
+        if len(connection_attempts) == 1:
+            return ClosedConnection()
+
+        return WorkingConnection()
+
+    async def mock_sleep(delay: float):
+        pass
+
+    client = MarketWebSocketClient(
+        base_url="wss://fstream.binance.com",
+        connector=mock_connect,
+        sleeper=mock_sleep,
+    )
+
+    message = await client.receive_order_book("BTCUSDT")
+
+    assert connection_attempts == [
+        "wss://fstream.binance.com/ws/btcusdt@depth",
+        "wss://fstream.binance.com/ws/btcusdt@depth",
     ]
     assert message == '{"e":"depthUpdate","s":"BTCUSDT"}'
