@@ -19,3 +19,13 @@ class MarketDataClient:
             response.raise_for_status()
 
             return response.json()
+
+    async def get_exchange_info(self) -> dict:
+        async with httpx.AsyncClient(
+            base_url=self.base_url,
+            transport=self.transport,
+        ) as client:
+            response = await client.get("/fapi/v1/exchangeInfo")
+            response.raise_for_status()
+
+            return response.json()
