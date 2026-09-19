@@ -54,7 +54,7 @@ Legenda:
 * [x] Implement backpressure
 * [x] Create data buffers
 * [x] Track dropped messages
-* [ ] Track processing latency
+* [x] Track processing latency
 
 ---
 
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Track processing latency.
+Get trading pairs.
