@@ -45,3 +45,35 @@ def test_market_data_buffer_rejects_non_positive_max_size(max_size):
         match="max_size must be greater than zero",
     ):
         MarketDataBuffer(max_size=max_size)
+
+
+def test_market_data_buffer_starts_with_zero_dropped_messages():
+    buffer = MarketDataBuffer(max_size=1)
+
+    assert buffer.dropped_messages == 0
+
+
+def test_market_data_buffer_tracks_dropped_message_when_full():
+    buffer = MarketDataBuffer(max_size=1)
+
+    first_message = {"e": "aggTrade", "s": "BTCUSDT"}
+    second_message = {"e": "aggTrade", "s": "ETHUSDT"}
+
+    assert buffer.try_put(first_message) is True
+    assert buffer.try_put(second_message) is False
+
+    assert buffer.dropped_messages == 1
+
+
+def test_market_data_buffer_accumulates_dropped_messages():
+    buffer = MarketDataBuffer(max_size=1)
+
+    first_message = {"e": "aggTrade", "s": "BTCUSDT"}
+    second_message = {"e": "aggTrade", "s": "ETHUSDT"}
+    third_message = {"e": "aggTrade", "s": "SOLUSDT"}
+
+    assert buffer.try_put(first_message) is True
+    assert buffer.try_put(second_message) is False
+    assert buffer.try_put(third_message) is False
+
+    assert buffer.dropped_messages == 2
