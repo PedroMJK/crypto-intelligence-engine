@@ -51,7 +51,7 @@ Legenda:
 * [x] Implement reconnection
 * [x] Implement exponential backoff
 * [x] Implement error handling
-* [ ] Implement backpressure
+* [x] Implement backpressure
 * [ ] Create data buffers
 * [ ] Track dropped messages
 * [ ] Track processing latency
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Implement backpressure.
+Create data buffers.
