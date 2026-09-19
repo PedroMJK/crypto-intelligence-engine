@@ -63,7 +63,7 @@ Legenda:
 * [x] Get trading pairs
 * [x] Filter relevant pairs
 * [x] Create price filter
-* [ ] Create liquidity filter
+* [x] Create liquidity filter
 * [ ] Create volume filter
 * [ ] Create activity filter
 * [ ] Create ranking
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Create liquidity filter.
+Create volume filter.
