@@ -52,7 +52,7 @@ Legenda:
 * [x] Implement exponential backoff
 * [x] Implement error handling
 * [x] Implement backpressure
-* [ ] Create data buffers
+* [x] Create data buffers
 * [ ] Track dropped messages
 * [ ] Track processing latency
 
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Create data buffers.
+Track dropped messages.
