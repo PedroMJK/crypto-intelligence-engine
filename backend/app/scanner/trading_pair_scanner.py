@@ -29,3 +29,21 @@ class TradingPairScanner:
         ]
 
         return price_filter.filter(pairs_with_prices)
+
+    async def get_pairs_by_liquidity(self, liquidity_filter) -> list[dict]:
+        trading_pairs = await self.get_trading_pairs()
+        book_tickers = await self.market_data_client.get_book_tickers()
+
+        trading_pair_symbols = set(trading_pairs)
+
+        pairs_with_book_prices = [
+            {
+                "symbol": ticker["symbol"],
+                "bid_price": float(ticker["bidPrice"]),
+                "ask_price": float(ticker["askPrice"]),
+            }
+            for ticker in book_tickers
+            if ticker["symbol"] in trading_pair_symbols
+        ]
+
+        return liquidity_filter.filter(pairs_with_book_prices)
