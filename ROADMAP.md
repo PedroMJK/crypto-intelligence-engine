@@ -53,7 +53,7 @@ Legenda:
 * [x] Implement error handling
 * [x] Implement backpressure
 * [x] Create data buffers
-* [ ] Track dropped messages
+* [x] Track dropped messages
 * [ ] Track processing latency
 
 ---
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Track dropped messages.
+Track processing latency.
