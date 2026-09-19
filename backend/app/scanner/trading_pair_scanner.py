@@ -8,4 +8,7 @@ class TradingPairScanner:
         return [
             symbol["symbol"]
             for symbol in exchange_info["symbols"]
+            if symbol["status"] == "TRADING"
+            and symbol["contractType"] == "PERPETUAL"
+            and symbol["quoteAsset"] == "USDT"
         ]
