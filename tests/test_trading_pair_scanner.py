@@ -1,5 +1,6 @@
 import pytest
 
+from backend.app.scanner.liquidity_filter import LiquidityFilter
 from backend.app.scanner.price_filter import PriceFilter
 from backend.app.scanner.trading_pair_scanner import TradingPairScanner
 
@@ -209,5 +210,73 @@ async def test_get_pairs_by_price_filters_relevant_trading_pairs():
         {
             "symbol": "MIDUSDT",
             "price": 0.50,
+        }
+    ]
+
+
+@pytest.mark.asyncio
+async def test_get_pairs_by_liquidity_filters_relevant_trading_pairs():
+    class FakeMarketDataClient:
+        async def get_exchange_info(self):
+            return {
+                "symbols": [
+                    {
+                        "symbol": "LIQUIDUSDT",
+                        "pair": "LIQUIDUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                    {
+                        "symbol": "ILLIQUIDUSDT",
+                        "pair": "ILLIQUIDUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                    {
+                        "symbol": "OTHERUSDC",
+                        "pair": "OTHERUSDC",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDC",
+                    },
+                ]
+            }
+
+        async def get_book_tickers(self):
+            return [
+                {
+                    "symbol": "LIQUIDUSDT",
+                    "bidPrice": "0.499",
+                    "askPrice": "0.501",
+                },
+                {
+                    "symbol": "ILLIQUIDUSDT",
+                    "bidPrice": "0.45",
+                    "askPrice": "0.55",
+                },
+                {
+                    "symbol": "OTHERUSDC",
+                    "bidPrice": "0.499",
+                    "askPrice": "0.501",
+                },
+            ]
+
+    scanner = TradingPairScanner(
+        market_data_client=FakeMarketDataClient(),
+    )
+
+    liquidity_filter = LiquidityFilter(
+        max_spread_ratio=0.01,
+    )
+
+    result = await scanner.get_pairs_by_liquidity(liquidity_filter)
+
+    assert result == [
+        {
+            "symbol": "LIQUIDUSDT",
+            "bid_price": 0.499,
+            "ask_price": 0.501,
         }
     ]

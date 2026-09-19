@@ -39,3 +39,13 @@ class MarketDataClient:
             response.raise_for_status()
 
             return response.json()
+
+    async def get_book_tickers(self) -> list[dict]:
+        async with httpx.AsyncClient(
+            base_url=self.base_url,
+            transport=self.transport,
+        ) as client:
+            response = await client.get("/fapi/v1/ticker/bookTicker")
+            response.raise_for_status()
+
+            return response.json()

@@ -125,3 +125,60 @@ async def test_get_ticker_prices_returns_response_data():
             "time": 1750000000001,
         },
     ]
+
+
+@pytest.mark.asyncio
+async def test_get_book_tickers_returns_response_data():
+    def mock_handler(request: httpx.Request) -> httpx.Response:
+        assert request.method == "GET"
+        assert request.url.path == "/fapi/v1/ticker/bookTicker"
+
+        return httpx.Response(
+            status_code=200,
+            json=[
+                {
+                    "symbol": "BTCUSDT",
+                    "bidPrice": "59999.00",
+                    "bidQty": "1.50",
+                    "askPrice": "60001.00",
+                    "askQty": "1.25",
+                    "time": 1750000000000,
+                },
+                {
+                    "symbol": "ETHUSDT",
+                    "bidPrice": "2999.50",
+                    "bidQty": "10.00",
+                    "askPrice": "3000.50",
+                    "askQty": "8.00",
+                    "time": 1750000000001,
+                },
+            ],
+        )
+
+    transport = httpx.MockTransport(mock_handler)
+
+    client = MarketDataClient(
+        base_url="https://fapi.binance.com",
+        transport=transport,
+    )
+
+    result = await client.get_book_tickers()
+
+    assert result == [
+        {
+            "symbol": "BTCUSDT",
+            "bidPrice": "59999.00",
+            "bidQty": "1.50",
+            "askPrice": "60001.00",
+            "askQty": "1.25",
+            "time": 1750000000000,
+        },
+        {
+            "symbol": "ETHUSDT",
+            "bidPrice": "2999.50",
+            "bidQty": "10.00",
+            "askPrice": "3000.50",
+            "askQty": "8.00",
+            "time": 1750000000001,
+        },
+    ]
