@@ -61,7 +61,7 @@ Legenda:
 # Phase 3 — Scanner
 
 * [x] Get trading pairs
-* [ ] Filter relevant pairs
+* [x] Filter relevant pairs
 * [ ] Create price filter
 * [ ] Create liquidity filter
 * [ ] Create volume filter
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Filter relevant pairs.
+Create price filter.
