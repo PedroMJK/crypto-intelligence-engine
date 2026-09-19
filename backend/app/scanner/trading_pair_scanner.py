@@ -12,3 +12,20 @@ class TradingPairScanner:
             and symbol["contractType"] == "PERPETUAL"
             and symbol["quoteAsset"] == "USDT"
         ]
+
+    async def get_pairs_by_price(self, price_filter) -> list[dict]:
+        trading_pairs = await self.get_trading_pairs()
+        ticker_prices = await self.market_data_client.get_ticker_prices()
+
+        trading_pair_symbols = set(trading_pairs)
+
+        pairs_with_prices = [
+            {
+                "symbol": ticker["symbol"],
+                "price": float(ticker["price"]),
+            }
+            for ticker in ticker_prices
+            if ticker["symbol"] in trading_pair_symbols
+        ]
+
+        return price_filter.filter(pairs_with_prices)
