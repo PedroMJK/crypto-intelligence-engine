@@ -80,3 +80,48 @@ async def test_get_exchange_info_returns_response_data():
             },
         ]
     }
+
+
+@pytest.mark.asyncio
+async def test_get_ticker_prices_returns_response_data():
+    def mock_handler(request: httpx.Request) -> httpx.Response:
+        assert request.method == "GET"
+        assert request.url.path == "/fapi/v2/ticker/price"
+
+        return httpx.Response(
+            status_code=200,
+            json=[
+                {
+                    "symbol": "BTCUSDT",
+                    "price": "60000.00",
+                    "time": 1750000000000,
+                },
+                {
+                    "symbol": "ETHUSDT",
+                    "price": "3000.00",
+                    "time": 1750000000001,
+                },
+            ],
+        )
+
+    transport = httpx.MockTransport(mock_handler)
+
+    client = MarketDataClient(
+        base_url="https://fapi.binance.com",
+        transport=transport,
+    )
+
+    result = await client.get_ticker_prices()
+
+    assert result == [
+        {
+            "symbol": "BTCUSDT",
+            "price": "60000.00",
+            "time": 1750000000000,
+        },
+        {
+            "symbol": "ETHUSDT",
+            "price": "3000.00",
+            "time": 1750000000001,
+        },
+    ]
