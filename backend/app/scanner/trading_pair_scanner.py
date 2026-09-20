@@ -64,3 +64,20 @@ class TradingPairScanner:
         ]
 
         return volume_filter.filter(pairs_with_volumes)
+
+    async def get_pairs_by_activity(self, activity_filter) -> list[dict]:
+        trading_pairs = await self.get_trading_pairs()
+        ticker_statistics = await self.market_data_client.get_ticker_statistics()
+
+        trading_pair_symbols = set(trading_pairs)
+
+        pairs_with_activity = [
+            {
+                "symbol": ticker["symbol"],
+                "trade_count": int(ticker["count"]),
+            }
+            for ticker in ticker_statistics
+            if ticker["symbol"] in trading_pair_symbols
+        ]
+
+        return activity_filter.filter(pairs_with_activity)

@@ -182,3 +182,48 @@ async def test_get_book_tickers_returns_response_data():
             "time": 1750000000001,
         },
     ]
+
+
+@pytest.mark.asyncio
+async def test_get_ticker_statistics_returns_response_data():
+    def mock_handler(request: httpx.Request) -> httpx.Response:
+        assert request.method == "GET"
+        assert request.url.path == "/fapi/v1/ticker/24hr"
+
+        return httpx.Response(
+            status_code=200,
+            json=[
+                {
+                    "symbol": "BTCUSDT",
+                    "quoteVolume": "1500000000.00",
+                    "count": 2500000,
+                },
+                {
+                    "symbol": "ETHUSDT",
+                    "quoteVolume": "750000000.00",
+                    "count": 1500000,
+                },
+            ],
+        )
+
+    transport = httpx.MockTransport(mock_handler)
+
+    client = MarketDataClient(
+        base_url="https://fapi.binance.com",
+        transport=transport,
+    )
+
+    result = await client.get_ticker_statistics()
+
+    assert result == [
+        {
+            "symbol": "BTCUSDT",
+            "quoteVolume": "1500000000.00",
+            "count": 2500000,
+        },
+        {
+            "symbol": "ETHUSDT",
+            "quoteVolume": "750000000.00",
+            "count": 1500000,
+        },
+    ]
