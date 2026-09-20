@@ -1,5 +1,6 @@
 import pytest
 
+from backend.app.scanner.activity_filter import ActivityFilter
 from backend.app.scanner.liquidity_filter import LiquidityFilter
 from backend.app.scanner.price_filter import PriceFilter
 from backend.app.scanner.trading_pair_scanner import TradingPairScanner
@@ -343,5 +344,69 @@ async def test_get_pairs_by_volume_filters_relevant_trading_pairs():
         {
             "symbol": "HIGHVOLUMEUSDT",
             "quote_volume": 5_000_000.0,
+        }
+    ]
+
+
+@pytest.mark.asyncio
+async def test_get_pairs_by_activity_filters_relevant_trading_pairs():
+    class FakeMarketDataClient:
+        async def get_exchange_info(self):
+            return {
+                "symbols": [
+                    {
+                        "symbol": "ACTIVEUSDT",
+                        "pair": "ACTIVEUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                    {
+                        "symbol": "INACTIVEUSDT",
+                        "pair": "INACTIVEUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                    {
+                        "symbol": "OTHERUSDC",
+                        "pair": "OTHERUSDC",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDC",
+                    },
+                ]
+            }
+
+        async def get_ticker_statistics(self):
+            return [
+                {
+                    "symbol": "ACTIVEUSDT",
+                    "count": 5_000,
+                },
+                {
+                    "symbol": "INACTIVEUSDT",
+                    "count": 250,
+                },
+                {
+                    "symbol": "OTHERUSDC",
+                    "count": 5_000,
+                },
+            ]
+
+    scanner = TradingPairScanner(
+        market_data_client=FakeMarketDataClient(),
+    )
+
+    activity_filter = ActivityFilter(
+        min_trade_count=1_000,
+    )
+
+    result = await scanner.get_pairs_by_activity(activity_filter)
+
+    assert result == [
+        {
+            "symbol": "ACTIVEUSDT",
+            "trade_count": 5_000,
         }
     ]
