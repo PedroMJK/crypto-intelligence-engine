@@ -66,7 +66,7 @@ Legenda:
 * [x] Create liquidity filter
 * [x] Create volume filter
 * [x] Create activity filter
-* [ ] Create ranking
+* [x] Create ranking
 
 ---
 
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Create ranking.
+Buy volume.
