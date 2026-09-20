@@ -72,7 +72,7 @@ Legenda:
 
 # Phase 4 — Market Pressure Engine
 
-* [ ] Buy volume
+* [x] Buy volume
 * [ ] Sell volume
 * [ ] Buy/Sell ratio
 * [ ] Volume delta
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Buy volume.
+Sell volume.
