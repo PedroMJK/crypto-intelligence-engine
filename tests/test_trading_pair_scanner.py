@@ -3,6 +3,7 @@ import pytest
 from backend.app.scanner.activity_filter import ActivityFilter
 from backend.app.scanner.liquidity_filter import LiquidityFilter
 from backend.app.scanner.price_filter import PriceFilter
+from backend.app.scanner.scanner_ranking import ScannerRanking
 from backend.app.scanner.trading_pair_scanner import TradingPairScanner
 from backend.app.scanner.volume_filter import VolumeFilter
 
@@ -409,4 +410,236 @@ async def test_get_pairs_by_activity_filters_relevant_trading_pairs():
             "symbol": "ACTIVEUSDT",
             "trade_count": 5_000,
         }
+    ]
+
+
+@pytest.mark.asyncio
+async def test_get_filtered_pairs_applies_all_scanner_filters():
+    class FakeMarketDataClient:
+        async def get_exchange_info(self):
+            return {
+                "symbols": [
+                    {
+                        "symbol": "MATCHUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                    {
+                        "symbol": "LOWVOLUMEUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                    {
+                        "symbol": "OTHERUSDC",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDC",
+                    },
+                ]
+            }
+
+        async def get_ticker_prices(self):
+            return [
+                {"symbol": "MATCHUSDT", "price": "0.50"},
+                {"symbol": "LOWVOLUMEUSDT", "price": "0.50"},
+                {"symbol": "OTHERUSDC", "price": "0.50"},
+            ]
+
+        async def get_book_tickers(self):
+            return [
+                {
+                    "symbol": "MATCHUSDT",
+                    "bidPrice": "0.499",
+                    "askPrice": "0.501",
+                },
+                {
+                    "symbol": "LOWVOLUMEUSDT",
+                    "bidPrice": "0.499",
+                    "askPrice": "0.501",
+                },
+                {
+                    "symbol": "OTHERUSDC",
+                    "bidPrice": "0.499",
+                    "askPrice": "0.501",
+                },
+            ]
+
+        async def get_ticker_statistics(self):
+            return [
+                {
+                    "symbol": "MATCHUSDT",
+                    "quoteVolume": "5000000.00",
+                    "count": 5_000,
+                },
+                {
+                    "symbol": "LOWVOLUMEUSDT",
+                    "quoteVolume": "250000.00",
+                    "count": 5_000,
+                },
+                {
+                    "symbol": "OTHERUSDC",
+                    "quoteVolume": "5000000.00",
+                    "count": 5_000,
+                },
+            ]
+
+    scanner = TradingPairScanner(
+        market_data_client=FakeMarketDataClient(),
+    )
+
+    price_filter = PriceFilter(
+        min_price=0.10,
+        max_price=1.00,
+    )
+    liquidity_filter = LiquidityFilter(
+        max_spread_ratio=0.01,
+    )
+    volume_filter = VolumeFilter(
+        min_quote_volume=1_000_000.0,
+    )
+    activity_filter = ActivityFilter(
+        min_trade_count=1_000,
+    )
+
+    result = await scanner.get_filtered_pairs(
+        price_filter=price_filter,
+        liquidity_filter=liquidity_filter,
+        volume_filter=volume_filter,
+        activity_filter=activity_filter,
+    )
+
+    assert result == [
+        {
+            "symbol": "MATCHUSDT",
+            "price": 0.50,
+            "bid_price": 0.499,
+            "ask_price": 0.501,
+            "quote_volume": 5_000_000.0,
+            "trade_count": 5_000,
+        }
+    ]
+
+
+@pytest.mark.asyncio
+async def test_get_ranked_pairs_filters_and_ranks_candidates():
+    class FakeMarketDataClient:
+        async def get_exchange_info(self):
+            return {
+                "symbols": [
+                    {
+                        "symbol": "LOWACTIVITYUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                    {
+                        "symbol": "BETAUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                    {
+                        "symbol": "ALPHAUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                    {
+                        "symbol": "LOWVOLUMEUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                ]
+            }
+
+        async def get_ticker_prices(self):
+            return [
+                {"symbol": "LOWACTIVITYUSDT", "price": "0.50"},
+                {"symbol": "BETAUSDT", "price": "0.50"},
+                {"symbol": "ALPHAUSDT", "price": "0.50"},
+                {"symbol": "LOWVOLUMEUSDT", "price": "0.50"},
+            ]
+
+        async def get_book_tickers(self):
+            return [
+                {
+                    "symbol": "LOWACTIVITYUSDT",
+                    "bidPrice": "0.499",
+                    "askPrice": "0.501",
+                },
+                {
+                    "symbol": "BETAUSDT",
+                    "bidPrice": "0.499",
+                    "askPrice": "0.501",
+                },
+                {
+                    "symbol": "ALPHAUSDT",
+                    "bidPrice": "0.499",
+                    "askPrice": "0.501",
+                },
+                {
+                    "symbol": "LOWVOLUMEUSDT",
+                    "bidPrice": "0.499",
+                    "askPrice": "0.501",
+                },
+            ]
+
+        async def get_ticker_statistics(self):
+            return [
+                {
+                    "symbol": "LOWACTIVITYUSDT",
+                    "quoteVolume": "5000000.00",
+                    "count": 2_000,
+                },
+                {
+                    "symbol": "BETAUSDT",
+                    "quoteVolume": "5000000.00",
+                    "count": 5_000,
+                },
+                {
+                    "symbol": "ALPHAUSDT",
+                    "quoteVolume": "5000000.00",
+                    "count": 5_000,
+                },
+                {
+                    "symbol": "LOWVOLUMEUSDT",
+                    "quoteVolume": "250000.00",
+                    "count": 10_000,
+                },
+            ]
+
+    scanner = TradingPairScanner(
+        market_data_client=FakeMarketDataClient(),
+    )
+
+    price_filter = PriceFilter(
+        min_price=0.10,
+        max_price=1.00,
+    )
+    liquidity_filter = LiquidityFilter(
+        max_spread_ratio=0.01,
+    )
+    volume_filter = VolumeFilter(
+        min_quote_volume=1_000_000.0,
+    )
+    activity_filter = ActivityFilter(
+        min_trade_count=1_000,
+    )
+    ranking = ScannerRanking()
+
+    result = await scanner.get_ranked_pairs(
+        price_filter=price_filter,
+        liquidity_filter=liquidity_filter,
+        volume_filter=volume_filter,
+        activity_filter=activity_filter,
+        ranking=ranking,
+    )
+
+    assert [pair["symbol"] for pair in result] == [
+        "ALPHAUSDT",
+        "BETAUSDT",
+        "LOWACTIVITYUSDT",
     ]
