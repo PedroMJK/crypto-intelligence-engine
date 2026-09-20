@@ -3,6 +3,7 @@ import pytest
 from backend.app.scanner.liquidity_filter import LiquidityFilter
 from backend.app.scanner.price_filter import PriceFilter
 from backend.app.scanner.trading_pair_scanner import TradingPairScanner
+from backend.app.scanner.volume_filter import VolumeFilter
 
 
 @pytest.mark.asyncio
@@ -278,5 +279,69 @@ async def test_get_pairs_by_liquidity_filters_relevant_trading_pairs():
             "symbol": "LIQUIDUSDT",
             "bid_price": 0.499,
             "ask_price": 0.501,
+        }
+    ]
+
+
+@pytest.mark.asyncio
+async def test_get_pairs_by_volume_filters_relevant_trading_pairs():
+    class FakeMarketDataClient:
+        async def get_exchange_info(self):
+            return {
+                "symbols": [
+                    {
+                        "symbol": "HIGHVOLUMEUSDT",
+                        "pair": "HIGHVOLUMEUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                    {
+                        "symbol": "LOWVOLUMEUSDT",
+                        "pair": "LOWVOLUMEUSDT",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDT",
+                    },
+                    {
+                        "symbol": "OTHERUSDC",
+                        "pair": "OTHERUSDC",
+                        "status": "TRADING",
+                        "contractType": "PERPETUAL",
+                        "quoteAsset": "USDC",
+                    },
+                ]
+            }
+
+        async def get_ticker_statistics(self):
+            return [
+                {
+                    "symbol": "HIGHVOLUMEUSDT",
+                    "quoteVolume": "5000000.00",
+                },
+                {
+                    "symbol": "LOWVOLUMEUSDT",
+                    "quoteVolume": "250000.00",
+                },
+                {
+                    "symbol": "OTHERUSDC",
+                    "quoteVolume": "5000000.00",
+                },
+            ]
+
+    scanner = TradingPairScanner(
+        market_data_client=FakeMarketDataClient(),
+    )
+
+    volume_filter = VolumeFilter(
+        min_quote_volume=1_000_000.0,
+    )
+
+    result = await scanner.get_pairs_by_volume(volume_filter)
+
+    assert result == [
+        {
+            "symbol": "HIGHVOLUMEUSDT",
+            "quote_volume": 5_000_000.0,
         }
     ]

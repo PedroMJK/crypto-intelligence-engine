@@ -47,3 +47,20 @@ class TradingPairScanner:
         ]
 
         return liquidity_filter.filter(pairs_with_book_prices)
+
+    async def get_pairs_by_volume(self, volume_filter) -> list[dict]:
+        trading_pairs = await self.get_trading_pairs()
+        ticker_statistics = await self.market_data_client.get_ticker_statistics()
+
+        trading_pair_symbols = set(trading_pairs)
+
+        pairs_with_volumes = [
+            {
+                "symbol": ticker["symbol"],
+                "quote_volume": float(ticker["quoteVolume"]),
+            }
+            for ticker in ticker_statistics
+            if ticker["symbol"] in trading_pair_symbols
+        ]
+
+        return volume_filter.filter(pairs_with_volumes)
