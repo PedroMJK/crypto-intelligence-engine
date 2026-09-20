@@ -77,7 +77,7 @@ Legenda:
 * [x] Buy/Sell ratio
 * [x] Volume delta
 * [x] Trades per second
-* [ ] Price velocity
+* [x] Price velocity
 * [ ] Price acceleration
 * [ ] Volume anomaly
 * [ ] Pressure score
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Price velocity.
+Price acceleration.
