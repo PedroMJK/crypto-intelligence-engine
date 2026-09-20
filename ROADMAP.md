@@ -75,7 +75,7 @@ Legenda:
 * [x] Buy volume
 * [x] Sell volume
 * [x] Buy/Sell ratio
-* [ ] Volume delta
+* [x] Volume delta
 * [ ] Trades per second
 * [ ] Price velocity
 * [ ] Price acceleration
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Volume delta.
+Trades per second.
