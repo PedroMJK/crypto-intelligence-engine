@@ -79,7 +79,7 @@ Legenda:
 * [x] Trades per second
 * [x] Price velocity
 * [x] Price acceleration
-* [ ] Volume anomaly
+* [x] Volume anomaly
 * [ ] Pressure score
 * [ ] Pressure transition
 
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Volume anomaly.
+Pressure score.
