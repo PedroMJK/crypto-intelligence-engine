@@ -81,7 +81,7 @@ Legenda:
 * [x] Price acceleration
 * [x] Volume anomaly
 * [x] Pressure score
-* [ ] Pressure transition
+* [x] Pressure transition
 
 ---
 
@@ -201,4 +201,4 @@ Legenda:
 
 # Current Task
 
-Pressure transition.
+Technical indicators.
