@@ -87,12 +87,12 @@ Legenda:
 
 # Phase 5 — Advanced Analysis
 
-* [ ] Technical indicators
+* [x] Technical indicators
   * [x] Simple Moving Average (SMA)
   * [x] Exponential Moving Average (EMA)
   * [x] Relative Strength Index (RSI)
   * [x] Moving Average Convergence Divergence (MACD)
-  * [ ] Average True Range (ATR)
+  * [x] Average True Range (ATR)
 * [ ] Market structure
 * [ ] Support and resistance
 * [ ] Volatility
@@ -206,4 +206,4 @@ Legenda:
 
 # Current Task
 
-Technical indicators.
+Market structure.
