@@ -95,7 +95,7 @@ Legenda:
   * [x] Average True Range (ATR)
 * [ ] Market structure
   * [x] Swing High / Swing Low detection
-  * [ ] Structural point classification (HH, HL, LH, LL)
+  * [x] Structural point classification (HH, HL, LH, LL)
   * [ ] Structural trend detection
   * [ ] Break of Structure (BOS)
   * [ ] Structure change detection
