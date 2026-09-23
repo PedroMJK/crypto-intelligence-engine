@@ -89,7 +89,7 @@ Legenda:
 
 * [ ] Technical indicators
   * [x] Simple Moving Average (SMA)
-  * [ ] Exponential Moving Average (EMA)
+  * [x] Exponential Moving Average (EMA)
   * [ ] Relative Strength Index (RSI)
   * [ ] Moving Average Convergence Divergence (MACD)
   * [ ] Average True Range (ATR)
