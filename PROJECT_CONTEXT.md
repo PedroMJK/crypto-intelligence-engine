@@ -109,6 +109,25 @@ Para o agrupamento:
 - o agrupamento deve respeitar a ordem estrutural e temporal dos níveis confirmados;
 - nenhuma zona pode incorporar informação que ainda não estivesse disponível naquele momento, preservando causalidade e evitando look-ahead bias em backtests e análises históricas.
 
+#### Detecção de toques em suporte e resistência
+
+Zonas confirmadas de suporte e resistência podem ser monitoradas para identificar contatos posteriores do preço com o preço representativo da zona.
+
+Para a detecção de toques:
+
+- um toque ocorre quando o preço representativo da zona está contido no intervalo negociado pelo candle, isto é, `low <= zone_price <= high`;
+- a mesma regra geométrica de contato é utilizada para zonas de suporte e resistência, enquanto o tipo da zona preserva seu significado estrutural;
+- candles totalmente acima ou totalmente abaixo do preço representativo da zona não devem ser considerados toques;
+- os limites são inclusivos, portanto igualdade com a máxima ou a mínima do candle também representa um toque;
+- a busca por toques deve começar somente em `confirmation_index + 1`;
+- o candle de confirmação da zona não deve ser contado como um novo toque;
+- uma mesma zona pode registrar múltiplos toques posteriores;
+- múltiplas zonas podem produzir eventos de toque, e os eventos resultantes devem ser apresentados em ordem cronológica;
+- a detecção utiliza o preço representativo já produzido pelo agrupamento e não introduz uma nova tolerância de preço;
+- a detecção de toques não calcula força da zona, rompimentos, inversão de papel ou sinais de trading;
+- as entradas de zonas, máximas e mínimas não devem ser modificadas;
+- a detecção deve preservar causalidade temporal e evitar look-ahead bias.
+
 ### Multi-Timeframe Engine
 
 Responsável por comparar diferentes horizontes temporais.

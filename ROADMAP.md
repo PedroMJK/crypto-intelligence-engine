@@ -102,7 +102,7 @@ Legenda:
 * [ ] Support and resistance
   * [x] Support / resistance level detection
   * [x] Nearby level clustering
-  * [ ] Touch detection
+  * [x] Touch detection
   * [ ] Level strength
   * [ ] Level break detection
 * [ ] Volatility
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Touch detection.
+Level strength.
