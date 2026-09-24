@@ -93,12 +93,12 @@ Legenda:
   * [x] Relative Strength Index (RSI)
   * [x] Moving Average Convergence Divergence (MACD)
   * [x] Average True Range (ATR)
-* [ ] Market structure
+* [x] Market structure
   * [x] Swing High / Swing Low detection
   * [x] Structural point classification (HH, HL, LH, LL)
   * [x] Structural trend detection
   * [x] Break of Structure (BOS)
-  * [ ] Structure change detection
+  * [x] Structure change detection
 * [ ] Support and resistance
 * [ ] Volatility
 * [ ] Order book imbalance
@@ -211,4 +211,4 @@ Legenda:
 
 # Current Task
 
-Market structure.
+Support and resistance.
