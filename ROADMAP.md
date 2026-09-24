@@ -99,12 +99,12 @@ Legenda:
   * [x] Structural trend detection
   * [x] Break of Structure (BOS)
   * [x] Structure change detection
-* [ ] Support and resistance
+* [x] Support and resistance
   * [x] Support / resistance level detection
   * [x] Nearby level clustering
   * [x] Touch detection
   * [x] Level strength
-  * [ ] Level break detection
+  * [x] Level break detection
 * [ ] Volatility
 * [ ] Order book imbalance
 * [ ] Multi-timeframe analysis
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Level break detection.
+Volatility.

@@ -149,6 +149,27 @@ Para o cálculo de força:
 - esta primeira definição de força não utiliza pesos arbitrários, classificações como fraco, médio ou forte, volume, ATR, distância da reação, recência, rompimentos, inversão de papel ou sinais de trading;
 - o cálculo deve utilizar somente informações disponíveis em cada momento, preservando causalidade temporal e evitando look-ahead bias em backtests e análises históricas.
 
+#### Rompimento de níveis de suporte e resistência
+
+Zonas confirmadas de suporte e resistência podem ser monitoradas para identificar o primeiro fechamento que rompe seu preço representativo após a confirmação da zona.
+
+Para a detecção de rompimentos:
+
+- uma resistência é considerada rompida quando um candle posterior fecha estritamente acima do preço representativo da zona, isto é, `close > zone_price`;
+- um suporte é considerado rompido quando um candle posterior fecha estritamente abaixo do preço representativo da zona, isto é, `close < zone_price`;
+- igualdade entre o fechamento e o preço da zona não representa rompimento;
+- máximas e mínimas intrabar não são suficientes para confirmar um rompimento nesta definição; a confirmação utiliza o preço de fechamento;
+- a busca por rompimentos deve começar somente em `confirmation_index + 1`;
+- candles anteriores ou o próprio candle de confirmação da zona não podem produzir um evento de rompimento;
+- cada zona deve produzir no máximo um evento, correspondente ao primeiro fechamento que efetivamente rompe seu preço representativo;
+- múltiplas zonas podem ser rompidas no mesmo candle, e esses eventos distintos devem ser preservados;
+- eventos de diferentes zonas devem ser apresentados em ordem cronológica;
+- a detecção de rompimentos é independente da força acumulada da zona;
+- o rompimento não deve automaticamente transformar suporte em resistência ou resistência em suporte, pois inversão de papel constitui uma análise distinta;
+- a detecção não gera sinais de trading;
+- as zonas e os fechamentos recebidos não devem ser modificados;
+- o detector deve utilizar somente informações disponíveis após a confirmação de cada zona, preservando causalidade temporal e evitando look-ahead bias.
+
 ### Multi-Timeframe Engine
 
 Responsável por comparar diferentes horizontes temporais.
