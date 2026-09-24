@@ -77,6 +77,21 @@ Responsável por analisar o livro de ordens.
 
 Responsável por analisar estrutura, rompimentos e mudanças de tendência.
 
+#### Semântica temporal da estrutura de mercado
+
+Os componentes de Market Structure devem operar sobre dados numéricos e estruturais normalizados, permanecendo independentes da Binance ou de qualquer outra fonte específica de dados.
+
+Para pontos de swing:
+
+- `index` representa o candle em que o extremo do swing ocorreu;
+- `confirmation_index` representa o primeiro candle em que o swing pode ser considerado conhecido, após a disponibilidade dos candles necessários à sua direita;
+- um swing não pode ser utilizado por análises posteriores antes de seu `confirmation_index`;
+- a classificação estrutural deve preservar o `confirmation_index` dos swings confirmados;
+- detectores de rompimento e outros componentes posteriores devem respeitar essa informação temporal;
+- backtests, Prediction Lab e análises históricas devem respeitar essa mesma regra para evitar look-ahead bias.
+
+Para Break of Structure (BOS), um nível estrutural confirmado somente pode ser considerado rompido por candles posteriores ao seu `confirmation_index`.
+
 ### Multi-Timeframe Engine
 
 Responsável por comparar diferentes horizontes temporais.
