@@ -92,6 +92,23 @@ Para pontos de swing:
 
 Para Break of Structure (BOS), um nível estrutural confirmado somente pode ser considerado rompido por candles posteriores ao seu `confirmation_index`.
 
+#### Agrupamento de níveis de suporte e resistência
+
+Os níveis estruturais confirmados podem ser agrupados em zonas próximas de suporte ou resistência para representar regiões de preço formadas por múltiplos níveis relacionados.
+
+Para o agrupamento:
+
+- níveis de suporte e resistência devem ser agrupados separadamente e nunca combinados na mesma zona;
+- a proximidade entre um novo nível e uma zona deve ser calculada de forma relativa ao preço representativo da zona, evitando uma tolerância absoluta fixa entre ativos com escalas de preço diferentes;
+- o limite de proximidade é inclusivo;
+- o preço representativo da zona é a média aritmética dos níveis incorporados e deve ser atualizado à medida que novos níveis são adicionados;
+- cada novo nível deve ser comparado ao preço representativo atualizado da zona;
+- níveis que não encontram uma zona compatível devem ser preservados como zonas individuais;
+- a zona deve preservar os índices estruturais dos níveis que contribuíram para sua formação;
+- o `confirmation_index` de uma zona representa o momento em que aquela versão da zona passou a ser conhecida;
+- o agrupamento deve respeitar a ordem estrutural e temporal dos níveis confirmados;
+- nenhuma zona pode incorporar informação que ainda não estivesse disponível naquele momento, preservando causalidade e evitando look-ahead bias em backtests e análises históricas.
+
 ### Multi-Timeframe Engine
 
 Responsável por comparar diferentes horizontes temporais.

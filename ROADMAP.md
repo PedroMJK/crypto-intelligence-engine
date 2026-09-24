@@ -101,7 +101,7 @@ Legenda:
   * [x] Structure change detection
 * [ ] Support and resistance
   * [x] Support / resistance level detection
-  * [ ] Nearby level clustering
+  * [x] Nearby level clustering
   * [ ] Touch detection
   * [ ] Level strength
   * [ ] Level break detection
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Nearby level clustering.
+Touch detection.
