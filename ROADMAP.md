@@ -105,7 +105,7 @@ Legenda:
   * [x] Touch detection
   * [x] Level strength
   * [x] Level break detection
-* [ ] Volatility
+* [x] Volatility
 * [ ] Order book imbalance
 * [ ] Multi-timeframe analysis
 * [ ] Market regime
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Volatility.
+Order book imbalance.

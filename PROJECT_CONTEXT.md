@@ -170,6 +170,51 @@ Para a detecção de rompimentos:
 - as zonas e os fechamentos recebidos não devem ser modificados;
 - o detector deve utilizar somente informações disponíveis após a confirmação de cada zona, preservando causalidade temporal e evitando look-ahead bias.
 
+### Volatility Engine
+
+Responsável por medir a evolução da volatilidade do mercado de forma objetiva e temporal, utilizando métricas numéricas que possam posteriormente alimentar análises de regime, anomalias e inteligência de mercado.
+
+#### Série temporal de Average True Range (ATR)
+
+O componente `AverageTrueRange` deve disponibilizar, além do ATR final, a série de valores ATR confirmados ao longo dos dados recebidos.
+
+Para a série ATR:
+
+- `calculate()` continua retornando somente o ATR final, preservando o contrato existente;
+- `calculate_series()` retorna todos os valores ATR válidos a partir do primeiro período completo;
+- para `N` candles e período `P`, a série resultante contém `N - P + 1` valores;
+- os primeiros `P - 1` candles não produzem valores `None`; a série começa diretamente no primeiro ATR confirmado;
+- o primeiro ATR é calculado pela média dos primeiros True Ranges do período;
+- os valores posteriores utilizam a suavização de Wilder;
+- o True Range considera a máxima, a mínima e o fechamento anterior, preservando gaps entre candles;
+- cada valor ATR utiliza somente dados disponíveis até aquele momento, preservando causalidade temporal.
+
+#### Análise de expansão e contração da volatilidade
+
+O componente `VolatilityAnalyzer` compara o ATR atual com uma referência formada pelos valores ATR imediatamente anteriores.
+
+Para a análise:
+
+- o último elemento de `atr_values` representa o ATR atual;
+- a referência utiliza somente os `lookback` valores imediatamente anteriores ao ATR atual;
+- valores anteriores à janela solicitada não participam do cálculo;
+- `reference_atr` é a média aritmética dos ATRs da janela de referência;
+- `ratio` é calculado como `current_atr / reference_atr`;
+- `change` é calculado como `ratio - 1`;
+- `ratio > 1` representa volatilidade `expanding`;
+- `ratio < 1` representa volatilidade `contracting`;
+- `ratio == 1` representa volatilidade `stable`;
+- a análise mede expansão ou contração da volatilidade e não direção do preço;
+- volatilidade em expansão não implica movimento de alta, e volatilidade em contração não implica movimento de baixa;
+- não são utilizados limites arbitrários para classificar volatilidade como baixa, média ou alta;
+- ATR igual a zero é permitido como valor atual;
+- ATRs negativos são inválidos;
+- a referência deve ser maior que zero para que a razão seja definida;
+- a análise exige o ATR atual e pelo menos `lookback` valores anteriores;
+- os valores ATR recebidos não devem ser modificados;
+- somente informações anteriores ao ATR atual são utilizadas na referência, preservando causalidade temporal e evitando look-ahead bias;
+- classificações de regime, thresholds históricos, percentis, sinais de trading e interpretação direcional permanecem responsabilidades de componentes posteriores.
+
 ### Multi-Timeframe Engine
 
 Responsável por comparar diferentes horizontes temporais.
