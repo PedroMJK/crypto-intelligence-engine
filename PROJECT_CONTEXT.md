@@ -295,7 +295,41 @@ Para a primeira definição de Market Regime:
 
 ### Anomaly Detection Engine
 
-Responsável por detectar comportamento fora do padrão.
+Responsável por medir estatisticamente o quanto um valor atual se desvia de seu comportamento histórico, fornecendo evidências quantitativas de comportamento fora do padrão sem transformar essa primeira camada em classificação arbitrária, previsão ou sinal de trading.
+
+Para a primeira definição de Anomaly Detection:
+
+* `historical_values` representa a janela histórica utilizada como referência estatística;
+* `current_value` representa o valor atual que será comparado com essa referência;
+* o valor atual não deve participar do cálculo de sua própria referência histórica;
+* `mean` deve representar a média aritmética dos valores históricos;
+* `standard_deviation` deve utilizar o desvio-padrão populacional da janela histórica;
+* a variância deve ser calculada dividindo a soma dos desvios quadráticos pela quantidade total de valores históricos;
+* `deviation` deve ser calculado como `current_value - mean`;
+* `z_score` deve ser calculado como `deviation / standard_deviation`;
+* Z-score positivo representa um valor atual acima da média histórica;
+* Z-score negativo representa um valor atual abaixo da média histórica;
+* Z-score igual a zero representa um valor atual igual à média histórica;
+* esta primeira camada não deve utilizar thresholds arbitrários para decidir automaticamente se um valor constitui uma anomalia;
+* valores como `2`, `-2`, `3` ou `-3` não devem ser tratados isoladamente como limites universais de anomalia;
+* a interpretação posterior da magnitude do Z-score deve permanecer separada do cálculo estatístico;
+* valores históricos positivos, negativos e iguais a zero são permitidos;
+* `current_value` também pode ser positivo, negativo ou igual a zero;
+* `historical_values` deve ser uma lista não vazia;
+* todos os valores históricos devem ser numéricos;
+* `current_value` deve ser numérico;
+* booleanos não devem ser aceitos como valores numéricos válidos;
+* históricos com desvio-padrão igual a zero devem ser rejeitados, pois o Z-score não pode ser calculado nessa condição;
+* os valores históricos recebidos não devem ser modificados;
+* a análise deve ser determinística para as mesmas entradas;
+* `VolumeAnomaly` permanece um componente independente responsável pela razão entre volume atual e volume de referência;
+* o `AnomalyDetector` não substitui métricas específicas de domínio, como volume anomaly, volatilidade, order book imbalance ou estrutura de mercado;
+* o componente deve fornecer contexto estatístico que possa posteriormente alimentar mecanismos de inteligência, calibração, análise histórica e backtesting;
+* o cálculo deve utilizar somente valores históricos disponíveis antes do valor atual, preservando causalidade temporal e evitando look-ahead bias;
+* o componente não deve gerar sinais de compra ou venda;
+* o componente não deve produzir probabilidades de movimento futuro;
+* o componente não deve decidir direção futura do preço;
+* classificação de anomalias, calibração de thresholds, combinação com outras evidências, confiança e interpretação preditiva permanecem responsabilidades de componentes posteriores do sistema.
 
 ### Market Pressure Engine
 
