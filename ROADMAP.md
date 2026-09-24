@@ -103,7 +103,7 @@ Legenda:
   * [x] Support / resistance level detection
   * [x] Nearby level clustering
   * [x] Touch detection
-  * [ ] Level strength
+  * [x] Level strength
   * [ ] Level break detection
 * [ ] Volatility
 * [ ] Order book imbalance
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Level strength.
+Level break detection.
