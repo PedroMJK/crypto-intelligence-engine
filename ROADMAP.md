@@ -109,7 +109,7 @@ Legenda:
 * [x] Order book imbalance
 * [x] Multi-timeframe analysis
 * [x] Market regime
-* [ ] Anomaly detection
+* [x] Anomaly detection
 
 ---
 
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Anomaly detection.
+Technical score.
