@@ -337,7 +337,58 @@ Responsável por combinar múltiplas evidências de pressão compradora ou vende
 
 ### Intelligence Engine
 
-Responsável por score, confiança, contradições e combinação das análises.
+Responsável por transformar evidências produzidas pelas camadas analíticas em scores normalizados, medir concordâncias e contradições e posteriormente combinar essas evidências sem transformar scores intermediários em probabilidades ou previsões não validadas.
+
+Os primeiros scores do Intelligence Engine devem preservar a separação entre diferentes domínios de evidência:
+
+* `TechnicalScore` representa evidências direcionais derivadas de indicadores técnicos;
+* `FlowScore` representa evidências relacionadas ao fluxo comprador e vendedor observado;
+* `MomentumScore` representa evidências relacionadas à direção, velocidade e aceleração do movimento do preço;
+* `VolumeScore` representa evidências relacionadas à intensidade e anormalidade da atividade de volume, sem assumir automaticamente direção do preço;
+* `StructureScore` representa evidências produzidas pela estrutura de mercado, rompimentos e contexto estrutural;
+* métricas correlacionadas ou matematicamente derivadas umas das outras não devem ser tratadas automaticamente como evidências independentes;
+* volatilidade, regime de mercado, análise multi-timeframe e contexto de anomalias não devem ser convertidos artificialmente em evidências direcionais quando sua semântica original não determina direção;
+* combinação entre scores, confiança, contradições e interpretação conjunta permanecem responsabilidades das camadas posteriores do Intelligence Engine;
+* pesos e thresholds não devem ser introduzidos arbitrariamente e deverão ser calibrados e validados posteriormente quando houver evidência histórica suficiente;
+* todos os componentes devem preservar causalidade temporal e evitar look-ahead bias.
+
+#### Technical Score
+
+O componente `TechnicalScore` é responsável por agregar evidências técnicas direcionais que já tenham sido previamente transformadas para uma escala normalizada comum.
+
+Para a primeira definição de Technical Score:
+
+* `signals` deve ser uma lista não vazia de evidências técnicas normalizadas;
+* cada sinal deve ser numérico e permanecer no intervalo inclusivo entre `-1.0` e `1.0`;
+* valores negativos representam evidência técnica com inclinação bearish;
+* valores positivos representam evidência técnica com inclinação bullish;
+* zero representa evidência técnica neutra;
+* os extremos `-1.0` e `1.0` são valores válidos;
+* booleanos não devem ser aceitos como valores numéricos válidos;
+* entradas não numéricas devem ser rejeitadas;
+* sinais fora do intervalo permitido devem ser rejeitados;
+* uma única evidência válida pode produzir um Technical Score;
+* o score deve ser calculado pela média aritmética das evidências disponíveis;
+* todas as evidências possuem o mesmo peso nesta primeira definição;
+* pesos arbitrários não devem ser introduzidos;
+* evidências ausentes não devem ser inventadas ou substituídas por valores artificiais;
+* uma lista vazia não possui evidência suficiente para produzir um score e deve ser rejeitada;
+* os sinais recebidos não devem ser modificados;
+* o cálculo deve ser determinístico para as mesmas entradas;
+* o resultado permanece no intervalo entre `-1.0` e `1.0`;
+* o valor resultante representa evidência técnica agregada e não uma probabilidade de movimento futuro;
+* por exemplo, um Technical Score igual a `0.6` não significa 60% de probabilidade de alta;
+* o componente não deve calcular diretamente SMA, EMA, RSI, MACD ou outros indicadores;
+* indicadores técnicos permanecem componentes independentes;
+* a transformação de valores brutos de indicadores em sinais normalizados deve permanecer separada do agregador e poderá ser calibrada posteriormente;
+* ATR e outras medidas de volatilidade não devem ser convertidos automaticamente em sinais bullish ou bearish, pois magnitude de volatilidade não determina direção;
+* evidências de estrutura de mercado devem permanecer separadas para evitar sobreposição com o futuro `StructureScore`;
+* evidências de fluxo, momentum e volume devem permanecer separadas para evitar dupla contagem entre os diferentes scores;
+* o Technical Score não deve gerar sinais de compra ou venda;
+* o Technical Score não deve produzir confiança;
+* o Technical Score não deve produzir probabilidades;
+* o Technical Score não deve realizar previsão do preço;
+* calibração, pesos aprendidos, thresholds, confiança, contradições e combinação com outros scores permanecem responsabilidades de etapas posteriores do sistema.
 
 ### Prediction Lab
 
