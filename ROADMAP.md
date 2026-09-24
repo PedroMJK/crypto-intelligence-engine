@@ -97,7 +97,7 @@ Legenda:
   * [x] Swing High / Swing Low detection
   * [x] Structural point classification (HH, HL, LH, LL)
   * [x] Structural trend detection
-  * [ ] Break of Structure (BOS)
+  * [x] Break of Structure (BOS)
   * [ ] Structure change detection
 * [ ] Support and resistance
 * [ ] Volatility
