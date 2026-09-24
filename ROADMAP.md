@@ -115,7 +115,7 @@ Legenda:
 
 # Phase 6 — Intelligence Engine
 
-* [ ] Technical score
+* [x] Technical score
 * [ ] Flow score
 * [ ] Momentum score
 * [ ] Volume score
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Technical score.
+Flow score.
