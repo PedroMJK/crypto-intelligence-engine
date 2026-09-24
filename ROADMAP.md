@@ -108,7 +108,7 @@ Legenda:
 * [x] Volatility
 * [x] Order book imbalance
 * [x] Multi-timeframe analysis
-* [ ] Market regime
+* [x] Market regime
 * [ ] Anomaly detection
 
 ---
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Market regime.
+Anomaly detection.
