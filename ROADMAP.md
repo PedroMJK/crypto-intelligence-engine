@@ -107,7 +107,7 @@ Legenda:
   * [x] Level break detection
 * [x] Volatility
 * [x] Order book imbalance
-* [ ] Multi-timeframe analysis
+* [x] Multi-timeframe analysis
 * [ ] Market regime
 * [ ] Anomaly detection
 
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Multi-timeframe analysis.
+Market regime.
