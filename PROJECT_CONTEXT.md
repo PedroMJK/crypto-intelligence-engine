@@ -128,6 +128,27 @@ Para a detecção de toques:
 - as entradas de zonas, máximas e mínimas não devem ser modificadas;
 - a detecção deve preservar causalidade temporal e evitar look-ahead bias.
 
+#### Força de níveis de suporte e resistência
+
+Zonas confirmadas de suporte e resistência podem ter sua força estrutural acompanhada ao longo do tempo a partir das evidências já conhecidas sobre sua formação e seus toques posteriores.
+
+Para o cálculo de força:
+
+- a força inicial de uma zona é determinada por seu `level_count`, representando a quantidade de níveis estruturais que contribuíram para sua formação;
+- no momento do `confirmation_index` da zona, `touch_count` deve ser igual a zero e `strength` deve ser igual a `level_count`;
+- cada toque posterior confirmado na mesma zona incrementa `touch_count` em uma unidade;
+- a força deve ser calculada de forma determinística como `strength = level_count + touch_count`;
+- cada novo toque deve produzir um novo estado temporal da força da zona, preservando os estados anteriores;
+- os eventos de força devem preservar o tipo, o preço representativo, o `level_count` e o `zone_confirmation_index` da zona correspondente;
+- um toque somente pode atualizar a força quando seu índice for posterior ao `confirmation_index` da zona;
+- a associação entre um toque e sua zona deve considerar conjuntamente `type`, `price` e `zone_confirmation_index`;
+- eventos pertencentes a múltiplas zonas devem ser apresentados em ordem cronológica, preservando eventos distintos que ocorram no mesmo candle;
+- a ordem de entrada dos eventos de toque não deve alterar a evolução cronológica da força;
+- eventos de toque que não correspondam a uma zona existente devem ser rejeitados em vez de ignorados silenciosamente;
+- o cálculo de força não deve modificar as zonas nem os eventos de toque recebidos;
+- esta primeira definição de força não utiliza pesos arbitrários, classificações como fraco, médio ou forte, volume, ATR, distância da reação, recência, rompimentos, inversão de papel ou sinais de trading;
+- o cálculo deve utilizar somente informações disponíveis em cada momento, preservando causalidade temporal e evitando look-ahead bias em backtests e análises históricas.
+
 ### Multi-Timeframe Engine
 
 Responsável por comparar diferentes horizontes temporais.
