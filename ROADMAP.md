@@ -100,6 +100,11 @@ Legenda:
   * [x] Break of Structure (BOS)
   * [x] Structure change detection
 * [ ] Support and resistance
+  * [ ] Support / resistance level detection
+  * [ ] Nearby level clustering
+  * [ ] Touch detection
+  * [ ] Level strength
+  * [ ] Level break detection
 * [ ] Volatility
 * [ ] Order book imbalance
 * [ ] Multi-timeframe analysis
