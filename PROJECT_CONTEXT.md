@@ -428,6 +428,44 @@ Para a primeira definição de Flow Score:
 * o Flow Score não deve realizar previsão do preço;
 * calibração, pesos aprendidos, thresholds, confiança, contradições e combinação com outros scores permanecem responsabilidades de etapas posteriores do sistema.
 
+#### Momentum Score
+
+O componente `MomentumScore` é responsável por agregar evidências direcionais relacionadas ao momentum do preço que já tenham sido previamente transformadas para uma escala normalizada comum.
+
+Para a primeira definição de Momentum Score:
+
+* `signals` deve ser uma lista não vazia de evidências de momentum normalizadas;
+* cada sinal deve ser numérico e permanecer no intervalo inclusivo entre `-1.0` e `1.0`;
+* valores negativos representam evidência de momentum com inclinação bearish;
+* valores positivos representam evidência de momentum com inclinação bullish;
+* zero representa evidência de momentum neutra;
+* os extremos `-1.0` e `1.0` são valores válidos;
+* booleanos não devem ser aceitos como valores numéricos válidos;
+* entradas não numéricas devem ser rejeitadas;
+* sinais fora do intervalo permitido devem ser rejeitados;
+* uma única evidência válida pode produzir um Momentum Score;
+* o score deve ser calculado pela média aritmética das evidências disponíveis;
+* todas as evidências possuem o mesmo peso nesta primeira definição;
+* pesos arbitrários não devem ser introduzidos;
+* evidências ausentes não devem ser inventadas ou substituídas por valores artificiais;
+* uma lista vazia não possui evidência suficiente para produzir um score e deve ser rejeitada;
+* os sinais recebidos não devem ser modificados;
+* o cálculo deve ser determinístico para as mesmas entradas;
+* o resultado permanece no intervalo entre `-1.0` e `1.0`;
+* o valor resultante representa evidência agregada de momentum e não uma probabilidade de movimento futuro;
+* por exemplo, um Momentum Score igual a `0.6` não significa 60% de probabilidade de alta;
+* o componente não deve calcular diretamente Price Velocity ou Price Acceleration;
+* métricas de momentum permanecem componentes independentes;
+* a transformação de valores brutos de velocity e acceleration em sinais normalizados deve permanecer separada do agregador e poderá ser calibrada posteriormente;
+* Price Acceleration deriva da mudança de Price Velocity ao longo do tempo e sua relação deve ser considerada ao construir evidências para evitar dupla contagem inadequada;
+* velocity positiva com acceleration negativa pode representar movimento ainda positivo, porém desacelerando, e não deve ser automaticamente interpretada como erro ou contradição;
+* evidências técnicas, de fluxo, volume e estrutura devem permanecer separadas para evitar sobreposição entre os diferentes scores;
+* o Momentum Score não deve gerar sinais de compra ou venda;
+* o Momentum Score não deve produzir confiança;
+* o Momentum Score não deve produzir probabilidades;
+* o Momentum Score não deve realizar previsão do preço;
+* calibração, pesos aprendidos, thresholds, confiança, contradições e combinação com outros scores permanecem responsabilidades de etapas posteriores do sistema.
+
 ### Prediction Lab
 
 Responsável por registrar previsões e verificar o que realmente aconteceu depois.
