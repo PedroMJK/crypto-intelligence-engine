@@ -73,6 +73,35 @@ Responsável por medir direção, velocidade e aceleração.
 
 Responsável por analisar o livro de ordens.
 
+#### Order Book Imbalance
+
+O Order Book Engine deve permitir medir o desequilíbrio entre a quantidade agregada de ordens de compra e venda observadas nos níveis selecionados do livro.
+
+Para o cálculo do imbalance:
+
+- `bids` representam níveis de compra no formato `(price, quantity)`;
+- `asks` representam níveis de venda no formato `(price, quantity)`;
+- `depth` determina a quantidade máxima de níveis considerados em cada lado;
+- quando `depth` for maior que a quantidade disponível de níveis, todos os níveis disponíveis devem ser utilizados;
+- a quantidade agregada de bids é a soma das quantidades dos níveis selecionados;
+- a quantidade agregada de asks é a soma das quantidades dos níveis selecionados;
+- o volume total é `bid_volume + ask_volume`;
+- o imbalance deve ser calculado como `(bid_volume - ask_volume) / (bid_volume + ask_volume)`;
+- o resultado deve permanecer entre `-1` e `1`;
+- imbalance positivo representa maior quantidade agregada no lado dos bids;
+- imbalance negativo representa maior quantidade agregada no lado dos asks;
+- imbalance igual a zero representa equilíbrio entre os lados;
+- `state` deve ser `bid_dominant`, `ask_dominant` ou `balanced`, de acordo com o sinal do imbalance;
+- a análise deve utilizar somente os níveis efetivamente observados;
+- preços devem ser maiores que zero;
+- quantidades não podem ser negativas;
+- `depth` deve ser um inteiro maior que zero;
+- livros com bids ou asks vazios devem ser rejeitados;
+- o volume total deve ser maior que zero;
+- as entradas recebidas não devem ser modificadas;
+- esta primeira definição não utiliza pesos, distância do preço, order book walls, execução de trades, spoofing ou thresholds arbitrários;
+- o imbalance representa a distribuição da liquidez observada no livro e não constitui, isoladamente, uma previsão de movimento futuro do preço.
+
 ### Market Structure Engine
 
 Responsável por analisar estrutura, rompimentos e mudanças de tendência.
