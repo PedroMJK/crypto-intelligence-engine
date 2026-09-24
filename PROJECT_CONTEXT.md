@@ -269,6 +269,30 @@ Para a análise multi-timeframe:
 * esta primeira camada não determina concordância, conflito, força de confluência, score, probabilidade ou direção futura do preço;
 * a interpretação de concordância ou divergência entre timeframes permanece responsabilidade de componentes posteriores do sistema.
 
+### Market Regime Engine
+
+Responsável por representar o contexto atual do mercado a partir da combinação de tendência estrutural e estado de volatilidade, mantendo essas dimensões separadas e sem transformar o contexto em um sinal de trading.
+
+Para a primeira definição de Market Regime:
+
+* `trend` deve representar o estado produzido pela análise de estrutura de mercado;
+* os estados de tendência aceitos são `bullish`, `bearish` e `indeterminate`;
+* `volatility` deve representar o estado produzido pela análise de volatilidade;
+* os estados de volatilidade aceitos são `expanding`, `stable` e `contracting`;
+* o resultado deve preservar as duas dimensões separadamente, utilizando as chaves `trend` e `volatility`;
+* a combinação entre tendência e volatilidade não deve criar classificações compostas arbitrárias;
+* `PressureScore` não faz parte da primeira definição do Market Regime e deve permanecer uma análise independente;
+* a análise multi-timeframe não deve ser reduzida a um único estado de regime nesta primeira camada;
+* estados de tendência devem ser validados contra o conjunto de estados estruturais suportados;
+* estados de volatilidade devem ser validados contra o conjunto de estados de volatilidade suportados;
+* valores de tendência e volatilidade devem ser strings não vazias;
+* entradas com tipos inválidos devem ser rejeitadas;
+* entradas inválidas não devem ser silenciosamente convertidas ou normalizadas;
+* a análise não deve modificar os valores recebidos;
+* o Market Regime deve descrever o contexto observado e não deve gerar, isoladamente, sinais de compra ou venda;
+* o Market Regime não deve produzir probabilidades, previsões de movimento futuro ou decisões de trading;
+* a interpretação conjunta de pressão, múltiplos timeframes, confluências, contradições, confiança e probabilidade permanece responsabilidade de componentes posteriores do sistema.
+
 ### Anomaly Detection Engine
 
 Responsável por detectar comportamento fora do padrão.
