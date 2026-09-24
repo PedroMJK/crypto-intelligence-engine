@@ -507,6 +507,49 @@ Para a primeira definição de Volume Score:
 * o Volume Score não deve realizar previsão do preço;
 * calibração, normalização de métricas brutas, pesos aprendidos, thresholds, confiança, contradições e combinação com outros scores permanecem responsabilidades de etapas posteriores do sistema.
 
+#### Structure Score
+
+O componente `StructureScore` é responsável por agregar evidências direcionais relacionadas à estrutura de mercado que já tenham sido previamente transformadas para uma escala normalizada comum e preparadas para evitar dupla contagem de informações estruturalmente relacionadas.
+
+Para a primeira definição de Structure Score:
+
+* `signals` deve ser uma lista não vazia de evidências estruturais normalizadas;
+* cada sinal deve ser numérico e permanecer no intervalo inclusivo entre `-1.0` e `1.0`;
+* valores negativos representam evidência estrutural com inclinação bearish;
+* valores positivos representam evidência estrutural com inclinação bullish;
+* zero representa evidência estrutural neutra ou balanceada;
+* os extremos `-1.0` e `1.0` são valores válidos;
+* booleanos não devem ser aceitos como valores numéricos válidos;
+* entradas não numéricas devem ser rejeitadas;
+* sinais fora do intervalo permitido devem ser rejeitados;
+* uma única evidência válida pode produzir um Structure Score;
+* o score deve ser calculado pela média aritmética das evidências disponíveis;
+* todas as evidências possuem o mesmo peso nesta primeira definição;
+* pesos arbitrários não devem ser introduzidos;
+* evidências ausentes não devem ser inventadas ou substituídas por valores artificiais;
+* uma lista vazia não possui evidência suficiente para produzir um score e deve ser rejeitada;
+* os sinais recebidos não devem ser modificados;
+* o cálculo deve ser determinístico para as mesmas entradas;
+* o resultado permanece no intervalo entre `-1.0` e `1.0`;
+* o valor resultante representa evidência estrutural agregada e não uma probabilidade de movimento futuro;
+* por exemplo, um Structure Score igual a `0.7` não significa 70% de probabilidade de alta;
+* o componente não deve classificar diretamente pontos estruturais como HH, HL, LH ou LL;
+* o componente não deve detectar diretamente tendência estrutural;
+* o componente não deve detectar diretamente Break of Structure;
+* o componente não deve detectar diretamente mudanças de estrutura;
+* Structural Point Classification, Structural Trend, Break of Structure e Structure Change permanecem componentes independentes de análise;
+* HH, HL, LH e LL alimentam a interpretação da tendência estrutural e não devem ser automaticamente tratados como evidências independentes adicionais quando a mesma informação já estiver representada por uma evidência derivada;
+* Break of Structure e Structure Change também podem representar informações relacionadas, pois Structure Change utiliza contexto estrutural e eventos de break;
+* evidências estruturais relacionadas devem ser preparadas e deduplicadas antes de serem fornecidas ao agregador;
+* a existência de múltiplas representações derivadas do mesmo evento estrutural não deve aumentar artificialmente a força do Structure Score;
+* a transformação dos resultados estruturais brutos em sinais normalizados deve permanecer separada do agregador e poderá ser calibrada posteriormente;
+* evidências técnicas, de fluxo, momentum e volume devem permanecer separadas das evidências estruturais;
+* o Structure Score não deve gerar sinais de compra ou venda;
+* o Structure Score não deve produzir confiança;
+* o Structure Score não deve produzir probabilidades;
+* o Structure Score não deve realizar previsão do preço;
+* calibração, normalização, deduplicação, pesos aprendidos, thresholds, confiança, contradições e combinação com outros scores permanecem responsabilidades de etapas posteriores do sistema.
+
 ### Prediction Lab
 
 Responsável por registrar previsões e verificar o que realmente aconteceu depois.
