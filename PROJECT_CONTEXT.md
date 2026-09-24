@@ -466,6 +466,47 @@ Para a primeira definição de Momentum Score:
 * o Momentum Score não deve realizar previsão do preço;
 * calibração, pesos aprendidos, thresholds, confiança, contradições e combinação com outros scores permanecem responsabilidades de etapas posteriores do sistema.
 
+#### Volume Score
+
+O componente `VolumeScore` é responsável por agregar evidências relacionadas à intensidade de volume que já tenham sido previamente transformadas para uma escala normalizada comum.
+
+Diferentemente de Technical Score, Flow Score e Momentum Score, o Volume Score não representa direção bullish ou bearish. Volume representa principalmente intensidade e participação de mercado, portanto sua escala normalizada permanece entre `0.0` e `1.0`.
+
+Para a primeira definição de Volume Score:
+
+* `signals` deve ser uma lista não vazia de evidências de volume normalizadas;
+* cada sinal deve ser numérico e permanecer no intervalo inclusivo entre `0.0` e `1.0`;
+* `0.0` representa a menor intensidade dentro da escala normalizada;
+* `1.0` representa a maior intensidade dentro da escala normalizada;
+* valores intermediários representam níveis intermediários de intensidade;
+* booleanos não devem ser aceitos como valores numéricos válidos;
+* entradas não numéricas devem ser rejeitadas;
+* sinais fora do intervalo permitido devem ser rejeitados;
+* uma única evidência válida pode produzir um Volume Score;
+* o score deve ser calculado pela média aritmética das evidências disponíveis;
+* todas as evidências possuem o mesmo peso nesta primeira definição;
+* pesos arbitrários não devem ser introduzidos;
+* evidências ausentes não devem ser inventadas ou substituídas por valores artificiais;
+* uma lista vazia não possui evidência suficiente para produzir um score e deve ser rejeitada;
+* os sinais recebidos não devem ser modificados;
+* o cálculo deve ser determinístico para as mesmas entradas;
+* o resultado permanece no intervalo entre `0.0` e `1.0`;
+* o Volume Score não possui sinal direcional;
+* um Volume Score alto não significa evidência bullish;
+* um Volume Score baixo não significa evidência bearish;
+* por exemplo, um Volume Score igual a `0.9` não significa 90% de probabilidade de alta, queda ou qualquer outro movimento futuro;
+* o componente não deve calcular diretamente Volume Anomaly ou z-score;
+* métricas brutas de volume e detecção de anomalias permanecem componentes independentes;
+* a transformação de Volume Anomaly, z-score ou outras métricas de volume em sinais normalizados entre `0.0` e `1.0` deve permanecer separada do agregador e poderá ser calibrada posteriormente;
+* `VolumeAnomaly` e um `AnomalyDetector` aplicado aos mesmos dados de volume não devem ser automaticamente tratados como evidências independentes, pois podem representar diferentes transformações do mesmo fenômeno subjacente;
+* direção de preço ou pressão compradora/vendedora não deve ser inferida exclusivamente a partir da intensidade de volume;
+* evidências técnicas, de fluxo, momentum e estrutura devem permanecer separadas para evitar sobreposição entre os diferentes scores;
+* o Volume Score não deve gerar sinais de compra ou venda;
+* o Volume Score não deve produzir confiança;
+* o Volume Score não deve produzir probabilidades;
+* o Volume Score não deve realizar previsão do preço;
+* calibração, normalização de métricas brutas, pesos aprendidos, thresholds, confiança, contradições e combinação com outros scores permanecem responsabilidades de etapas posteriores do sistema.
+
 ### Prediction Lab
 
 Responsável por registrar previsões e verificar o que realmente aconteceu depois.
