@@ -96,7 +96,7 @@ Legenda:
 * [ ] Market structure
   * [x] Swing High / Swing Low detection
   * [x] Structural point classification (HH, HL, LH, LL)
-  * [ ] Structural trend detection
+  * [x] Structural trend detection
   * [ ] Break of Structure (BOS)
   * [ ] Structure change detection
 * [ ] Support and resistance
