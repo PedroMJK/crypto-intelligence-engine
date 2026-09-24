@@ -12,6 +12,7 @@ class StructuralPointClassifier:
             point_type = point["type"]
             point_index = point["index"]
             point_price = point["price"]
+            confirmation_index = point.get("confirmation_index")
 
             if point_type not in {"high", "low"}:
                 raise ValueError(
@@ -46,14 +47,19 @@ class StructuralPointClassifier:
 
                 previous_low = point_price
 
-            classified_points.append(
-                {
-                    "index": point_index,
-                    "price": point_price,
-                    "type": point_type,
-                    "classification": classification,
-                }
-            )
+            classified_point = {
+                "index": point_index,
+                "price": point_price,
+                "type": point_type,
+                "classification": classification,
+            }
+
+            if confirmation_index is not None:
+                classified_point["confirmation_index"] = (
+                    confirmation_index
+                )
+
+            classified_points.append(classified_point)
 
             previous_index = point_index
 

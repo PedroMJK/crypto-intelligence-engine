@@ -171,6 +171,44 @@ def test_structural_point_classifier_uses_equal_point_as_new_reference():
     ] == [None, "HH", None, "LH"]
 
 
+def test_structural_point_classifier_preserves_confirmation_index():
+    classifier = StructuralPointClassifier()
+
+    result = classifier.classify(
+        [
+            {
+                "index": 1,
+                "confirmation_index": 2,
+                "price": 10.0,
+                "type": "high",
+            },
+            {
+                "index": 3,
+                "confirmation_index": 4,
+                "price": 12.0,
+                "type": "high",
+            },
+        ]
+    )
+
+    assert result == [
+        {
+            "index": 1,
+            "confirmation_index": 2,
+            "price": 10.0,
+            "type": "high",
+            "classification": None,
+        },
+        {
+            "index": 3,
+            "confirmation_index": 4,
+            "price": 12.0,
+            "type": "high",
+            "classification": "HH",
+        },
+    ]
+
+
 def test_structural_point_classifier_returns_empty_list():
     classifier = StructuralPointClassifier()
 
