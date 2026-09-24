@@ -119,7 +119,7 @@ Legenda:
 * [x] Flow score
 * [x] Momentum score
 * [x] Volume score
-* [ ] Structure score
+* [x] Structure score
 * [ ] Confidence engine
 * [ ] Contradiction engine
 * [ ] Ensemble engine
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Structure score.
+Confidence engine.
