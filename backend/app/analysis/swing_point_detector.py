@@ -56,6 +56,7 @@ class SwingPointDetector:
                 swing_points.append(
                     {
                         "index": index,
+                        "confirmation_index": index + window,
                         "price": current_high,
                         "type": "high",
                     }
@@ -65,6 +66,7 @@ class SwingPointDetector:
                 swing_points.append(
                     {
                         "index": index,
+                        "confirmation_index": index + window,
                         "price": current_low,
                         "type": "low",
                     }

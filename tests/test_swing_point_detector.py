@@ -15,6 +15,7 @@ def test_swing_point_detector_detects_swing_high():
     assert result == [
         {
             "index": 2,
+            "confirmation_index": 4,
             "price": 15.0,
             "type": "high",
         }
@@ -33,6 +34,7 @@ def test_swing_point_detector_detects_swing_low():
     assert result == [
         {
             "index": 2,
+            "confirmation_index": 4,
             "price": 6.0,
             "type": "low",
         }
@@ -51,11 +53,13 @@ def test_swing_point_detector_returns_points_in_chronological_order():
     assert result == [
         {
             "index": 1,
+            "confirmation_index": 2,
             "price": 15.0,
             "type": "high",
         },
         {
             "index": 3,
+            "confirmation_index": 4,
             "price": 5.0,
             "type": "low",
         },
