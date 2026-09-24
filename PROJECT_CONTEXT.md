@@ -550,6 +550,57 @@ Para a primeira definição de Structure Score:
 * o Structure Score não deve realizar previsão do preço;
 * calibração, normalização, deduplicação, pesos aprendidos, thresholds, confiança, contradições e combinação com outros scores permanecem responsabilidades de etapas posteriores do sistema.
 
+#### Confidence Engine
+
+O componente `ConfidenceEngine` é responsável por agregar medidas de força de evidência que já tenham sido previamente transformadas para uma escala normalizada comum.
+
+Nesta primeira definição, confidence representa a força agregada das evidências fornecidas ao componente. Confidence não representa direção, concordância entre sinais, ausência de contradição ou probabilidade calibrada de um movimento futuro.
+
+Para a primeira definição do Confidence Engine:
+
+* `signals` deve ser uma lista não vazia de medidas de força de evidência previamente normalizadas;
+* cada sinal deve ser numérico e permanecer no intervalo inclusivo entre `0.0` e `1.0`;
+* `0.0` representa a extremidade inferior da escala normalizada de força de evidência;
+* `1.0` representa a extremidade superior da escala normalizada de força de evidência;
+* os extremos `0.0` e `1.0` são valores válidos;
+* booleanos não devem ser aceitos como valores numéricos válidos;
+* entradas não numéricas devem ser rejeitadas;
+* sinais fora do intervalo permitido devem ser rejeitados;
+* uma única evidência válida pode produzir confidence;
+* confidence deve ser calculada pela média aritmética das evidências disponíveis;
+* todas as evidências possuem o mesmo peso nesta primeira definição;
+* pesos arbitrários não devem ser introduzidos;
+* evidências ausentes não devem ser inventadas ou substituídas por valores artificiais;
+* uma lista vazia não possui evidência suficiente para produzir confidence e deve ser rejeitada;
+* os sinais recebidos não devem ser modificados;
+* o cálculo deve ser determinístico para as mesmas entradas;
+* o resultado permanece no intervalo entre `0.0` e `1.0`;
+* o valor resultante representa força agregada das evidências normalizadas fornecidas ao componente;
+* por exemplo, confidence igual a `0.8` não significa 80% de probabilidade de alta, queda ou acerto;
+* confidence não representa direção bullish ou bearish;
+* confidence não representa concordância entre evidências direcionais;
+* confidence não representa ausência de contradição;
+* evidências fortes podem existir simultaneamente em direções opostas;
+* contradição entre evidências permanece responsabilidade do `ContradictionEngine`;
+* scores direcionais não devem ser convertidos automaticamente para confidence por meio de valor absoluto dentro do `ConfidenceEngine`;
+* a transformação de resultados brutos ou scores direcionais em medidas normalizadas de força deve permanecer separada do agregador;
+* evidências correlacionadas não devem ser automaticamente tratadas como fontes independentes adicionais de confiança;
+* a existência de múltiplas representações derivadas da mesma informação não deve aumentar artificialmente confidence;
+* Volume Score permanece uma medida de intensidade e não deve ser interpretado automaticamente como confidence;
+* Technical Score, Flow Score, Momentum Score e Structure Score permanecem medidas direcionais independentes do Confidence Engine;
+* o Confidence Engine não deve gerar direção de mercado;
+* o Confidence Engine não deve gerar sinais de compra ou venda;
+* o Confidence Engine não deve produzir probabilidades;
+* o Confidence Engine não deve realizar previsão do preço;
+* calibração estatística, transformação de scores em medidas de força, deduplicação de evidências, pesos aprendidos e probabilidades permanecem responsabilidades de etapas posteriores do sistema.
+
+A separação conceitual adotada pelo sistema é:
+
+* direção representa qual lado as evidências direcionais favorecem;
+* confidence representa força agregada das evidências normalizadas fornecidas;
+* contradiction representa o grau de conflito entre evidências direcionais e permanece uma dimensão separada;
+* probability exige calibração estatística contra resultados observados e não deve ser inferida diretamente de confidence.
+
 ### Prediction Lab
 
 Responsável por registrar previsões e verificar o que realmente aconteceu depois.
