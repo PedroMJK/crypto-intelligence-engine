@@ -390,6 +390,44 @@ Para a primeira definição de Technical Score:
 * o Technical Score não deve realizar previsão do preço;
 * calibração, pesos aprendidos, thresholds, confiança, contradições e combinação com outros scores permanecem responsabilidades de etapas posteriores do sistema.
 
+#### Flow Score
+
+O componente `FlowScore` é responsável por agregar evidências direcionais relacionadas ao fluxo de mercado que já tenham sido previamente transformadas para uma escala normalizada comum.
+
+Para a primeira definição de Flow Score:
+
+* `signals` deve ser uma lista não vazia de evidências de fluxo normalizadas;
+* cada sinal deve ser numérico e permanecer no intervalo inclusivo entre `-1.0` e `1.0`;
+* valores negativos representam evidência de fluxo com inclinação vendedora;
+* valores positivos representam evidência de fluxo com inclinação compradora;
+* zero representa evidência de fluxo neutra ou equilibrada;
+* os extremos `-1.0` e `1.0` são valores válidos;
+* booleanos não devem ser aceitos como valores numéricos válidos;
+* entradas não numéricas devem ser rejeitadas;
+* sinais fora do intervalo permitido devem ser rejeitados;
+* uma única evidência válida pode produzir um Flow Score;
+* o score deve ser calculado pela média aritmética das evidências disponíveis;
+* todas as evidências possuem o mesmo peso nesta primeira definição;
+* pesos arbitrários não devem ser introduzidos;
+* evidências ausentes não devem ser inventadas ou substituídas por valores artificiais;
+* uma lista vazia não possui evidência suficiente para produzir um score e deve ser rejeitada;
+* os sinais recebidos não devem ser modificados;
+* o cálculo deve ser determinístico para as mesmas entradas;
+* o resultado permanece no intervalo entre `-1.0` e `1.0`;
+* o valor resultante representa evidência agregada de fluxo e não uma probabilidade de movimento futuro;
+* por exemplo, um Flow Score igual a `0.6` não significa 60% de probabilidade de alta;
+* o componente não deve calcular diretamente Buy Volume, Sell Volume, Buy/Sell Ratio, Volume Delta ou Order Book Imbalance;
+* métricas de fluxo permanecem componentes independentes;
+* a transformação de métricas brutas de fluxo em sinais normalizados deve permanecer separada do agregador e poderá ser calibrada posteriormente;
+* Buy/Sell Ratio e Volume Delta derivam dos mesmos volumes de compra e venda e não devem ser tratados automaticamente como evidências independentes, evitando dupla contagem da mesma informação;
+* Order Book Imbalance representa o desequilíbrio observado entre liquidez bid e ask e não deve ser interpretado isoladamente como previsão do movimento futuro do preço;
+* evidências técnicas, de momentum, volume e estrutura devem permanecer separadas para evitar sobreposição entre os diferentes scores;
+* o Flow Score não deve gerar sinais de compra ou venda;
+* o Flow Score não deve produzir confiança;
+* o Flow Score não deve produzir probabilidades;
+* o Flow Score não deve realizar previsão do preço;
+* calibração, pesos aprendidos, thresholds, confiança, contradições e combinação com outros scores permanecem responsabilidades de etapas posteriores do sistema.
+
 ### Prediction Lab
 
 Responsável por registrar previsões e verificar o que realmente aconteceu depois.
