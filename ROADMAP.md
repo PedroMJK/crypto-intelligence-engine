@@ -122,7 +122,7 @@ Legenda:
 * [x] Structure score
 * [x] Confidence engine
 * [x] Contradiction engine
-* [ ] Ensemble engine
+* [x] Ensemble engine
 
 ---
 
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Ensemble engine.
+Begin Phase 7 — Prediction Lab.
