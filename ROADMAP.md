@@ -132,6 +132,7 @@ Legenda:
   * [x] Define immutable analysis record
   * [x] Add in-memory analysis registry
 * [ ] Register predictions
+  * [x] Define immutable prediction record
 * [ ] Save features
 * [ ] Evaluate result after 1 minute
 * [ ] Evaluate result after 5 minutes
