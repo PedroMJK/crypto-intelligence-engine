@@ -135,6 +135,7 @@ Legenda:
   * [x] Define immutable prediction record
   * [x] Add in-memory prediction registry
 * [ ] Save features
+  * [x] Define immutable feature snapshot
 * [ ] Evaluate result after 1 minute
 * [ ] Evaluate result after 5 minutes
 * [ ] Evaluate result after 15 minutes

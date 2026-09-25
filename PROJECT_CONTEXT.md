@@ -825,6 +825,35 @@ O `PredictionRegistry` é atualmente uma implementação em memória. Ele estabe
 
 O registry não calcula scores, probabilidades, outcomes ou sinais de trading. Sua responsabilidade é exclusivamente preservar as hipóteses já representadas por `PredictionRecord`.
 
+#### Feature Snapshot
+
+O componente `FeatureSnapshot` representa um snapshot imutável das features conhecidas em um instante específico do Prediction Lab.
+
+O snapshot preserva:
+
+* `symbol`;
+* `feature_timestamp`;
+* `features`.
+
+O campo `features` representa um mapping entre nomes de features e valores numéricos escalares. O contrato não fixa antecipadamente um conjunto fechado de indicadores, permitindo que novas features sejam incorporadas sem alterar a estrutura fundamental do snapshot.
+
+Para o snapshot:
+
+* `feature_timestamp` representa o instante em que as features estavam disponíveis;
+* pelo menos uma feature deve estar presente;
+* nomes de features devem ser strings não vazias;
+* valores de features devem ser numéricos e finitos;
+* valores negativos, zero e positivos são permitidos porque cada feature preserva sua própria escala e semântica;
+* booleanos, `NaN` e infinitos são rejeitados;
+* o mapping de features é defensivamente copiado e exposto de forma imutável;
+* alterações posteriores no mapping original não modificam o snapshot.
+
+O `FeatureSnapshot` não impõe genericamente intervalos como `[0, 1]`, `[-1, 1]` ou `[0, 100]`, pois diferentes features possuem escalas distintas.
+
+Somente informações disponíveis até `feature_timestamp` podem compor o snapshot. Outcomes futuros, preços futuros, retornos futuros ou qualquer informação derivada deles não pertencem às features, preservando a regra de zero look-ahead.
+
+Estruturas complexas produzidas pelos motores de análise não são armazenadas diretamente neste primeiro contrato. Quando necessário, propriedades escalares semanticamente definidas poderão ser extraídas dessas estruturas e registradas como features.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
