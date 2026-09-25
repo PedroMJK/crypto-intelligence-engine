@@ -723,7 +723,46 @@ A arquitetura mantém a seguinte separação:
 
 ### Prediction Lab
 
-Responsável por registrar previsões e verificar o que realmente aconteceu depois.
+Responsável por registrar análises e previsões e verificar o que realmente aconteceu depois, preservando a separação entre estado observado, hipótese preditiva e resultado futuro.
+
+#### Analysis Record
+
+O componente `AnalysisRecord` representa um snapshot imutável das informações disponíveis no instante de referência de uma análise.
+
+O registro preserva:
+
+* `symbol`;
+* `reference_timestamp`;
+* `reference_price`;
+* `technical_score`;
+* `flow_score`;
+* `momentum_score`;
+* `structure_score`;
+* `direction_score`;
+* `volume_score`;
+* `confidence`;
+* `contradiction`.
+
+Para o registro:
+
+* `reference_timestamp` representa o instante máximo até o qual as informações utilizadas pela análise estavam disponíveis;
+* `reference_price` representa o preço de referência da observação e deve ser positivo e finito;
+* scores direcionais permanecem no intervalo `[-1.0, +1.0]`;
+* `volume_score`, `confidence` e `contradiction` permanecem no intervalo `[0.0, 1.0]`;
+* valores não numéricos, booleanos, `NaN` e infinitos são rejeitados quando aplicável;
+* o registro é imutável após sua criação.
+
+O `AnalysisRecord` não calcula scores e não transforma scores em previsões ou probabilidades. Ele preserva os valores produzidos anteriormente pelos componentes responsáveis por esses cálculos.
+
+A separação conceitual inicial do Prediction Lab permanece:
+
+`Analysis → Prediction → Outcome`
+
+Analysis representa somente informações disponíveis no instante de referência. Prediction deverá representar uma hipótese registrada a partir dessas informações. Outcome deverá representar o que foi observado posteriormente.
+
+Resultados futuros não podem ser utilizados na construção retroativa de uma análise. Informações estruturais ou multi-timeframe somente podem participar de uma análise quando já estiverem confirmadas e disponíveis até seu `reference_timestamp`.
+
+Probabilidade não deve ser inferida diretamente de `direction_score`, `confidence`, `volume_score` ou `contradiction`. A transformação de evidências em probabilidades exigirá validação e calibração estatística contra resultados observados.
 
 ### Machine Learning
 

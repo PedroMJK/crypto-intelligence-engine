@@ -129,6 +129,7 @@ Legenda:
 # Phase 7 — Prediction Lab
 
 * [ ] Register analyses
+  * [x] Define immutable analysis record
 * [ ] Register predictions
 * [ ] Save features
 * [ ] Evaluate result after 1 minute
