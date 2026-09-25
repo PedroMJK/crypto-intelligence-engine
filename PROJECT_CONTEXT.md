@@ -601,6 +601,65 @@ A separação conceitual adotada pelo sistema é:
 * contradiction representa o grau de conflito entre evidências direcionais e permanece uma dimensão separada;
 * probability exige calibração estatística contra resultados observados e não deve ser inferida diretamente de confidence.
 
+#### Contradiction Engine
+
+O componente `ContradictionEngine` é responsável por medir a intensidade da oposição entre evidências direcionais que já tenham sido previamente normalizadas para uma escala comum.
+
+Nesta primeira definição, contradiction representa a força agregada do conflito entre evidências bullish e bearish. Contradiction não representa direção, confidence, probabilidade ou previsão de movimento futuro.
+
+Para a primeira definição do Contradiction Engine:
+
+* `signals` deve ser uma lista não vazia de evidências direcionais previamente normalizadas;
+* cada sinal deve ser numérico e permanecer no intervalo inclusivo entre `-1.0` e `1.0`;
+* valores positivos representam evidência direcional bullish;
+* valores negativos representam evidência direcional bearish;
+* zero representa evidência direcional neutra;
+* os extremos `-1.0` e `1.0` são valores válidos;
+* booleanos não devem ser aceitos como valores numéricos válidos;
+* entradas não numéricas devem ser rejeitadas;
+* sinais fora do intervalo permitido devem ser rejeitados;
+* uma única evidência válida pode ser analisada e produz contradiction igual a zero, pois não existe uma evidência oposta concorrente;
+* uma lista vazia não possui evidência suficiente para análise e deve ser rejeitada;
+* os sinais recebidos não devem ser modificados;
+* o cálculo deve ser determinístico para as mesmas entradas;
+* a força bullish deve ser calculada pela soma das magnitudes positivas dividida pelo número total de sinais fornecidos;
+* a força bearish deve ser calculada pela soma das magnitudes negativas absolutas dividida pelo número total de sinais fornecidos;
+* contradiction deve ser calculada como duas vezes o menor valor entre a força bullish e a força bearish;
+* o resultado permanece no intervalo entre `0.0` e `1.0`;
+* `0.0` representa ausência de oposição direcional entre evidências;
+* `1.0` representa oposição máxima possível entre evidências de magnitude máxima nesta definição;
+* evidências alinhadas exclusivamente na mesma direção produzem contradiction igual a zero;
+* evidências exclusivamente neutras produzem contradiction igual a zero;
+* a presença de evidência direcional juntamente com evidência neutra não cria contradição por si só;
+* oposição entre evidências fracas deve produzir contradiction menor do que oposição equivalente entre evidências fortes;
+* sinais neutros reduzem a densidade agregada de evidência conflitante porque permanecem no denominador do cálculo;
+* por exemplo, `[1.0, -1.0]` produz contradiction igual a `1.0`;
+* por exemplo, `[0.1, -0.1]` produz contradiction igual a `0.1`;
+* por exemplo, `[1.0, -1.0, 0.0, 0.0]` produz contradiction igual a `0.5`;
+* por exemplo, `[0.9, 0.0]` produz contradiction igual a `0.0`;
+* contradiction não deve ser inferida apenas pela existência de sinais com sinais matemáticos diferentes;
+* magnitude das evidências deve participar da intensidade da contradição;
+* o componente não deve introduzir thresholds arbitrários para decidir quando existe contradição;
+* evidências correlacionadas ou derivadas da mesma informação não devem ser automaticamente tratadas como fontes independentes de conflito;
+* evidências direcionais devem ser normalizadas, preparadas e deduplicadas antes de serem fornecidas ao componente;
+* Technical Score, Flow Score, Momentum Score e Structure Score permanecem componentes direcionais separados;
+* Volume Score permanece uma medida de intensidade e não deve ser utilizado automaticamente como evidência direcional pelo Contradiction Engine;
+* Confidence Engine permanece responsável pela agregação de medidas normalizadas de força de evidência;
+* contradiction e confidence são dimensões diferentes e podem apresentar valores elevados simultaneamente;
+* o Contradiction Engine não deve decidir qual direção do mercado é favorecida;
+* o Contradiction Engine não deve gerar sinais de compra ou venda;
+* o Contradiction Engine não deve produzir confidence;
+* o Contradiction Engine não deve produzir probabilidades;
+* o Contradiction Engine não deve realizar previsão do preço;
+* calibração estatística, pesos aprendidos, transformação de métricas brutas, probabilidades e interpretação preditiva permanecem responsabilidades de etapas posteriores do sistema.
+
+A separação conceitual adotada pelo sistema permanece:
+
+* direção representa qual lado as evidências direcionais favorecem;
+* confidence representa força agregada das evidências normalizadas fornecidas;
+* contradiction representa a intensidade da oposição entre evidências direcionais;
+* probability exige calibração estatística contra resultados observados e não deve ser inferida diretamente de contradiction ou confidence.
+
 ### Prediction Lab
 
 Responsável por registrar previsões e verificar o que realmente aconteceu depois.

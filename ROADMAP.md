@@ -121,7 +121,7 @@ Legenda:
 * [x] Volume score
 * [x] Structure score
 * [x] Confidence engine
-* [ ] Contradiction engine
+* [x] Contradiction engine
 * [ ] Ensemble engine
 
 ---
@@ -216,4 +216,4 @@ Legenda:
 
 # Current Task
 
-Contradiction engine.
+Ensemble engine.
