@@ -807,6 +807,24 @@ O Prediction Lab não introduz thresholds direcionais arbitrários. A relação 
 
 O `PredictionRecord` também não contém outcomes futuros nem horizontes de avaliação. Uma mesma hipótese registrada em `t0` poderá posteriormente ser confrontada com resultados observados em diferentes horizontes temporais sem utilizar informação futura na construção da previsão.
 
+#### Prediction Registry
+
+O componente `PredictionRegistry` é responsável por registrar objetos `PredictionRecord` durante a execução do Prediction Lab.
+
+O registro segue as seguintes regras:
+
+* somente instâncias de `PredictionRecord` podem ser registradas;
+* registros são preservados na ordem em que foram inseridos;
+* o registry não reorganiza previsões automaticamente por `prediction_timestamp`;
+* a coleção exposta aos consumidores é imutável por meio de uma `tuple`;
+* registros com os mesmos valores são permitidos enquanto não existir uma regra formal de identidade;
+* o registry não cria nem modifica `PredictionRecord`;
+* nenhuma regra de UUID, deduplicação ou identidade persistente é assumida nesta etapa.
+
+O `PredictionRegistry` é atualmente uma implementação em memória. Ele estabelece o comportamento de registro sem acoplar o Prediction Lab a MongoDB ou outra tecnologia de persistência.
+
+O registry não calcula scores, probabilidades, outcomes ou sinais de trading. Sua responsabilidade é exclusivamente preservar as hipóteses já representadas por `PredictionRecord`.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
