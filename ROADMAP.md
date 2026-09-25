@@ -131,8 +131,9 @@ Legenda:
 * [x] Register analyses
   * [x] Define immutable analysis record
   * [x] Add in-memory analysis registry
-* [ ] Register predictions
+* [x] Register predictions
   * [x] Define immutable prediction record
+  * [x] Add in-memory prediction registry
 * [ ] Save features
 * [ ] Evaluate result after 1 minute
 * [ ] Evaluate result after 5 minutes
@@ -219,4 +220,4 @@ Legenda:
 
 # Current Task
 
-Register predictions.
+Save features.
