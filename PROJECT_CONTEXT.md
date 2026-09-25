@@ -782,6 +782,31 @@ O `AnalysisRegistry` é atualmente uma implementação em memória. Ele estabele
 
 Persistência durável, consultas especializadas e regras de identidade deverão ser introduzidas somente quando seus contratos forem definidos explicitamente.
 
+#### Prediction Record
+
+O componente `PredictionRecord` representa uma hipótese direcional imutável registrada no instante da previsão.
+
+O registro preserva:
+
+* `symbol`;
+* `prediction_timestamp`;
+* `reference_price`;
+* `direction_score`.
+
+Para o registro:
+
+* `prediction_timestamp` representa o instante em que a hipótese foi registrada;
+* `reference_price` representa o preço de referência no instante da previsão e deve ser positivo e finito;
+* `direction_score` preserva a hipótese direcional contínua no intervalo `[-1.0, +1.0]`;
+* valores não numéricos, booleanos, `NaN` e infinitos são rejeitados quando aplicável;
+* o registro é imutável após sua criação.
+
+O `direction_score` registrado não representa probabilidade, confiança, retorno esperado ou recomendação de trading. Nenhuma transformação automática para `BUY`, `SELL`, `LONG`, `SHORT`, bullish, bearish ou neutral é realizada nesta etapa.
+
+O Prediction Lab não introduz thresholds direcionais arbitrários. A relação entre scores registrados e resultados futuros deverá ser avaliada empiricamente a partir dos outcomes observados.
+
+O `PredictionRecord` também não contém outcomes futuros nem horizontes de avaliação. Uma mesma hipótese registrada em `t0` poderá posteriormente ser confrontada com resultados observados em diferentes horizontes temporais sem utilizar informação futura na construção da previsão.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
