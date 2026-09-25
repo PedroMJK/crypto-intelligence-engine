@@ -764,6 +764,24 @@ Resultados futuros não podem ser utilizados na construção retroativa de uma a
 
 Probabilidade não deve ser inferida diretamente de `direction_score`, `confidence`, `volume_score` ou `contradiction`. A transformação de evidências em probabilidades exigirá validação e calibração estatística contra resultados observados.
 
+#### Analysis Registry
+
+O componente `AnalysisRegistry` é responsável por registrar objetos `AnalysisRecord` durante a execução do Prediction Lab.
+
+O registro segue as seguintes regras:
+
+* somente instâncias de `AnalysisRecord` podem ser registradas;
+* registros são preservados na ordem em que foram inseridos;
+* o registry não reorganiza análises automaticamente por `reference_timestamp`;
+* a coleção exposta aos consumidores é imutável por meio de uma `tuple`;
+* registros com os mesmos valores são permitidos enquanto não existir uma regra formal de identidade;
+* o registry não cria nem modifica `AnalysisRecord`;
+* nenhuma regra de UUID, deduplicação ou identidade persistente é assumida nesta etapa.
+
+O `AnalysisRegistry` é atualmente uma implementação em memória. Ele estabelece o comportamento de registro sem acoplar o Prediction Lab a MongoDB ou outra tecnologia de persistência.
+
+Persistência durável, consultas especializadas e regras de identidade deverão ser introduzidas somente quando seus contratos forem definidos explicitamente.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
