@@ -660,6 +660,67 @@ A separação conceitual adotada pelo sistema permanece:
 * contradiction representa a intensidade da oposição entre evidências direcionais;
 * probability exige calibração estatística contra resultados observados e não deve ser inferida diretamente de contradiction ou confidence.
 
+#### Ensemble Engine
+
+O componente `EnsembleEngine` é responsável por consolidar os scores produzidos pela camada de Intelligence Engine sem eliminar a separação semântica entre direção, intensidade, confidence e contradiction.
+
+Nesta primeira definição, o Ensemble Engine não produz probabilidade, previsão de preço ou sinal operacional. Seu objetivo é fornecer uma representação consolidada e estruturada dos resultados já calculados pelos componentes especializados.
+
+Para a primeira definição do Ensemble Engine:
+
+* `technical_score`, `flow_score`, `momentum_score` e `structure_score` representam evidências direcionais previamente normalizadas;
+* cada score direcional deve ser numérico, finito e permanecer no intervalo inclusivo entre `-1.0` e `1.0`;
+* valores direcionais positivos representam evidência bullish;
+* valores direcionais negativos representam evidência bearish;
+* zero representa neutralidade direcional;
+* `volume_score`, `confidence` e `contradiction` representam dimensões não direcionais separadas;
+* cada score não direcional deve ser numérico, finito e permanecer no intervalo inclusivo entre `0.0` e `1.0`;
+* booleanos não devem ser aceitos como valores numéricos válidos;
+* valores não numéricos devem ser rejeitados;
+* `NaN`, infinito positivo e infinito negativo devem ser rejeitados;
+* valores fora dos intervalos definidos devem ser rejeitados;
+* `direction_score` deve ser calculado pela média aritmética simples de `technical_score`, `flow_score`, `momentum_score` e `structure_score`;
+* nenhum peso arbitrário deve ser aplicado aos scores direcionais nesta primeira definição;
+* `volume_score` não deve alterar `direction_score`;
+* `confidence` não deve alterar `direction_score`;
+* `contradiction` não deve alterar `direction_score`;
+* `volume_score`, `confidence` e `contradiction` devem ser preservados separadamente no resultado consolidado;
+* scores direcionais equilibrados podem produzir `direction_score` igual a zero mesmo quando existe forte oposição entre as evidências;
+* neutralidade direcional e contradição são conceitos distintos;
+* `direction_score` igual a zero não implica automaticamente ausência de contradição;
+* `direction_score` deve permanecer no intervalo entre `-1.0` e `1.0`;
+* o resultado deve ser representado por `EnsembleResult`;
+* `EnsembleResult` deve preservar `direction_score`, `volume_score`, `confidence` e `contradiction`;
+* `EnsembleResult` deve ser imutável após sua criação;
+* o cálculo deve ser determinístico para as mesmas entradas;
+* o Ensemble Engine deve receber scores já calculados e normalizados, sem conhecer os detalhes internos dos indicadores ou analisadores que os produziram;
+* o Ensemble Engine não deve recalcular RSI, MACD, médias móveis, fluxo, momentum, estrutura de mercado, volume ou qualquer outra métrica de nível inferior;
+* o Ensemble Engine não deve transformar automaticamente volume em direção;
+* o Ensemble Engine não deve transformar confidence em direção;
+* o Ensemble Engine não deve utilizar contradiction como penalidade automática sobre direção;
+* fórmulas como `direction × confidence`, `direction × volume` ou `direction × (1 - contradiction)` não devem ser introduzidas sem validação empírica;
+* o Ensemble Engine não deve gerar sinais automáticos de compra ou venda;
+* o Ensemble Engine não deve executar operações;
+* o Ensemble Engine não deve interpretar seus resultados como probabilidades;
+* o Ensemble Engine não deve prometer capacidade preditiva;
+* pesos aprendidos, calibração estatística, probabilidades e interpretação preditiva permanecem responsabilidades de etapas posteriores do sistema.
+
+A saída consolidada preserva quatro dimensões distintas:
+
+* `direction_score` representa a direção agregada das evidências direcionais;
+* `volume_score` representa intensidade ou participação de volume;
+* `confidence` representa força agregada das evidências normalizadas fornecidas ao Confidence Engine;
+* `contradiction` representa intensidade da oposição entre evidências direcionais.
+
+A arquitetura mantém a seguinte separação:
+
+* direção não é probabilidade;
+* volume não é direção;
+* confidence não é probabilidade;
+* contradiction não é ausência de confidence;
+* Ensemble não é previsão;
+* probabilidade exige calibração estatística contra resultados observados em etapas posteriores.
+
 ### Prediction Lab
 
 Responsável por registrar previsões e verificar o que realmente aconteceu depois.
