@@ -144,7 +144,9 @@ Legenda:
 * [x] Calculate metrics
   * [x] Define immutable prediction metrics
   * [x] Add prediction metrics calculator
-* [ ] Create statistical report
+* [x] Create statistical report
+  * [x] Define immutable statistical report
+  * [x] Add statistical report generator
 
 ---
 
@@ -224,4 +226,4 @@ Legenda:
 
 # Current Task
 
-Create statistical report.
+Create dataset.
