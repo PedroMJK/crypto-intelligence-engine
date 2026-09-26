@@ -1440,6 +1440,23 @@ This preserves the train/validation/test boundary and allows Random Forest perfo
 
 The implementation uses `scikit-learn==1.9.1`.
 
+### Traditional Rules Comparison
+
+Traditional Intelligence Engine output and ML regression output are compared directionally per prediction horizon against the same observed future return.
+
+The comparison preserves the original continuous values:
+- `direction_score` for the traditional Intelligence Engine;
+- `predicted_return` for the ML model;
+- `future_return` as the observed outcome.
+
+The traditional `direction_score` and ML `predicted_return` are not compared numerically because they have different semantics and units. Directional evaluation uses only their signs, without introducing arbitrary thresholds.
+
+A positive value represents positive direction, a negative value represents negative direction, and an exact zero prediction is treated as neutral rather than silently classified as negative. Observed returns equal to zero are excluded from directional evaluation because they provide no positive or negative observed direction.
+
+Directional accuracy is evaluated independently per horizon. Neutral predictions are tracked separately from evaluated directional predictions so accuracy is not interpreted without its prediction coverage.
+
+The comparison layer is evaluation-only. It does not retrain models, create trading signals, select a winner automatically, or introduce capital, positions, fees, leverage, P&L, or strategy simulation.
+
 ## Tecnologias inicialmente previstas
 
 ### Backend

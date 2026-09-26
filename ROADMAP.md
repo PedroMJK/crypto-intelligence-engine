@@ -178,7 +178,7 @@ Legenda:
 * [x] XGBoost
 * [x] LightGBM
 * [x] Probability calibration
-* [ ] Compare with traditional rules
+* [x] Compare with traditional rules
 * [ ] Create ensemble
 
 ---
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Compare with traditional rules.
+Create ensemble.
