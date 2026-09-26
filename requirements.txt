@@ -10,6 +10,7 @@ websockets
 numpy
 pandas
 scikit-learn==1.9.1
+xgboost==3.4.1
 
 pymongo
 

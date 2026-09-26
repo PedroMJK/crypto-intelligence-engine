@@ -175,7 +175,7 @@ Legenda:
 * [x] Split training/validation/test datasets
 * [x] Create baseline
 * [x] Random Forest
-* [ ] XGBoost
+* [x] XGBoost
 * [ ] LightGBM
 * [ ] Probability calibration
 * [ ] Compare with traditional rules
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-XGBoost.
+LightGBM.
