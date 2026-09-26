@@ -160,7 +160,7 @@ Legenda:
 * [x] Prevent look-ahead bias
   * [x] Add temporal look-ahead guard
   * [x] Integrate guard into backtest simulator
-* [ ] Calculate accuracy
+* [x] Calculate accuracy
 * [ ] Calculate precision
 * [ ] Calculate recall
 * [ ] Calculate confusion matrix
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Calculate accuracy.
+Calculate precision.
