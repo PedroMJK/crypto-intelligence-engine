@@ -1182,6 +1182,54 @@ Uma coleção vazia é inválida. Quando a coleção contém apenas observaçõe
 
 O `AccuracyCalculator` não recalcula `directional_alignment`, não introduz classificação de trading e não interpreta `direction_score`, `confidence` ou qualquer outra métrica como probabilidade.
 
+#### Directional Classification
+
+A camada de Backtesting possui uma classificação direcional compartilhada para métricas classificatórias históricas.
+
+`DirectionalClassifier` recebe uma coleção de `PredictionMetrics` e produz um `DirectionalClassification` imutável contendo:
+
+* `true_positive`;
+* `false_positive`;
+* `true_negative`;
+* `false_negative`.
+
+A classificação utiliza o sinal matemático de `direction_score` e `future_return`:
+
+* `direction_score > 0` e `future_return > 0` -> true positive;
+* `direction_score > 0` e `future_return < 0` -> false positive;
+* `direction_score < 0` e `future_return < 0` -> true negative;
+* `direction_score < 0` e `future_return > 0` -> false negative.
+
+Observações com `direction_score == 0` ou `future_return == 0` são consideradas neutras e não entram nas quatro contagens.
+
+Nenhum threshold de magnitude é aplicado. Valores positivos ou negativos diferentes de zero mantêm sua direção independentemente da magnitude.
+
+O termo positive representa exclusivamente uma direção positiva na avaliação histórica. Ele não representa probabilidade, recomendação de compra ou sinal de trading.
+
+O `DirectionalClassifier` aceita coleções `list` ou `tuple` de `PredictionMetrics`, preserva os objetos recebidos sem mutação e pode classificar múltiplos símbolos e horizontes sem agrupamento automático.
+
+O `DirectionalClassification` apenas representa as contagens classificatórias e não calcula métricas derivadas. Uma classificação contendo zero em todas as quatro contagens é válida quando nenhuma observação da coleção é direcionalmente classificável.
+
+Essa classificação é a base compartilhada para precision e para as futuras métricas de recall e confusion matrix, evitando definições independentes de TP, FP, TN e FN.
+
+#### Precision Calculator
+
+O componente `PrecisionCalculator` calcula a precisão das previsões direcionais positivas utilizando a classificação produzida pelo `DirectionalClassifier`.
+
+A métrica é definida como:
+
+`precision = true_positive / (true_positive + false_positive)`
+
+True negatives, false negatives e observações neutras não participam do cálculo da precision.
+
+O `PrecisionCalculator` delega a classificação ao `DirectionalClassifier` e não redefine as regras de TP, FP, TN ou FN.
+
+Quando `true_positive + false_positive == 0`, não existem previsões positivas avaliáveis. Nesse caso, precision é considerada indefinida pelo contrato atual e o componente gera `ValueError`.
+
+O resultado pertence ao intervalo `[0, 1]`.
+
+O cálculo não introduz thresholds arbitrários, não interpreta `direction_score` como probabilidade e não produz sinais ou recomendações de trading.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
