@@ -1013,6 +1013,53 @@ Nesta etapa, o Prediction Lab não transforma `direction_score` em probabilidade
 
 Métricas classificatórias e métricas de backtesting permanecem separadas até que seus contratos e critérios sejam definidos explicitamente nas fases apropriadas.
 
+#### Statistical Report
+
+O componente `StatisticalReport` representa um resumo estatístico imutável de múltiplos registros `PredictionMetrics` pertencentes ao mesmo horizonte temporal.
+
+O relatório preserva:
+
+* `horizon_minutes`;
+* `sample_count`;
+* `mean_direction_score`;
+* `mean_future_return`;
+* `mean_absolute_return`;
+* `mean_directional_alignment`.
+
+Cada média representa a agregação direta da métrica correspondente nas observações individuais.
+
+O `mean_absolute_return` é calculado a partir da média dos valores `absolute_return` individuais e não como o valor absoluto de `mean_future_return`.
+
+Da mesma forma, `mean_directional_alignment` é calculado a partir da média dos valores `directional_alignment` individuais e não como o produto entre `mean_direction_score` e `mean_future_return`.
+
+O relatório permanece descritivo e não transforma essas estatísticas em probabilidade, accuracy, win rate, classificação de acerto ou erro, resultado financeiro ou recomendação de trading.
+
+#### Statistical Report Generator
+
+O componente `StatisticalReportGenerator` agrega uma coleção não vazia de registros `PredictionMetrics` e produz um `StatisticalReport`.
+
+Todos os registros fornecidos devem pertencer ao mesmo `horizon_minutes`.
+
+Horizontes diferentes não são combinados automaticamente em uma única população estatística. Dessa forma, resultados de 1, 5, 15 e 30 minutos permanecem separados e podem ser analisados independentemente.
+
+Para uma coleção com `N` observações, o generator calcula:
+
+`mean_direction_score = Σ direction_score / N`
+
+`mean_future_return = Σ future_return / N`
+
+`mean_absolute_return = Σ absolute_return / N`
+
+`mean_directional_alignment = Σ directional_alignment / N`
+
+O generator não cria thresholds direcionais, não classifica previsões como corretas ou incorretas e não calcula métricas de backtesting.
+
+Com isso, o fluxo estatístico do Prediction Lab passa a ser:
+
+`PredictionRecord -> PredictionOutcome -> PredictionMetrics -> StatisticalReportGenerator -> StatisticalReport`
+
+Métricas classificatórias como accuracy, precision, recall e confusion matrix permanecem responsabilidade da fase de Backtesting.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
