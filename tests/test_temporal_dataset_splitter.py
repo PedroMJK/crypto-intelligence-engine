@@ -14,7 +14,14 @@ def create_sample(
     symbol: str = "FETUSDT",
     horizon_minutes: int = 15,
     target: float = 0.01,
+    target_timestamp: int | None = None,
 ) -> MLSample:
+    if target_timestamp is None:
+        target_timestamp = (
+            feature_timestamp
+            + horizon_minutes * 60_000
+        )
+
     return MLSample(
         features=FeatureSnapshot(
             symbol=symbol,
@@ -32,6 +39,7 @@ def create_sample(
         ),
         horizon_minutes=horizon_minutes,
         target=target,
+        target_timestamp=target_timestamp,
     )
 
 
@@ -42,7 +50,7 @@ def create_dataset(
 
     samples = [
         create_sample(
-            base_timestamp + index * 60_000,
+            base_timestamp + index * 1_200_000,
         )
         for index in range(sample_count)
     ]
@@ -329,15 +337,35 @@ def test_split_rejects_ratios_that_create_empty_validation():
             validation_ratio=0.10,
             test_ratio=0.40,
         )
+
+
 def test_split_allows_equal_timestamps_within_partition():
     dataset = MLDataset(
         samples=[
-            create_sample(1_800_000_000_000),
-            create_sample(1_800_000_000_000),
-            create_sample(1_800_000_060_000),
-            create_sample(1_800_000_120_000),
-            create_sample(1_800_000_180_000),
-            create_sample(1_800_000_240_000),
+            create_sample(
+                1_800_000_000_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_000_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_060_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_180_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_300_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_420_000,
+                horizon_minutes=1,
+            ),
         ]
     )
 
@@ -378,6 +406,7 @@ def test_split_rejects_equal_timestamp_across_train_validation_boundary():
             validation_ratio=0.25,
             test_ratio=0.25,
         )
+
 def test_split_rejects_equal_timestamp_across_train_validation_boundary():
     dataset = MLDataset(
         samples=[
@@ -395,6 +424,215 @@ def test_split_rejects_equal_timestamp_across_train_validation_boundary():
     with pytest.raises(
         ValueError,
         match="split boundaries must be strictly chronological",
+    ):
+        TemporalDatasetSplitter.split(
+            dataset=dataset,
+            train_ratio=0.50,
+            validation_ratio=0.25,
+            test_ratio=0.25,
+        )
+def test_split_rejects_train_target_after_validation_start():
+    dataset = MLDataset(
+        samples=[
+            create_sample(
+                1_800_000_000_000,
+                horizon_minutes=1,
+                target_timestamp=1_800_000_060_000,
+            ),
+            create_sample(
+                1_800_000_120_000,
+                horizon_minutes=1,
+                target_timestamp=1_800_000_180_000,
+            ),
+            create_sample(
+                1_800_000_240_000,
+                horizon_minutes=1,
+                target_timestamp=1_800_000_300_000,
+            ),
+            create_sample(
+                1_800_000_360_000,
+                horizon_minutes=1,
+                target_timestamp=1_800_000_600_000,
+            ),
+            create_sample(
+                1_800_000_480_000,
+                horizon_minutes=1,
+                target_timestamp=1_800_000_540_000,
+            ),
+            create_sample(
+                1_800_000_600_000,
+                horizon_minutes=1,
+                target_timestamp=1_800_000_660_000,
+            ),
+            create_sample(
+                1_800_000_720_000,
+                horizon_minutes=1,
+                target_timestamp=1_800_000_780_000,
+            ),
+            create_sample(
+                1_800_000_840_000,
+                horizon_minutes=1,
+                target_timestamp=1_800_000_900_000,
+            ),
+        ]
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="training targets must be observed before validation starts",
+    ):
+        TemporalDatasetSplitter.split(
+            dataset=dataset,
+            train_ratio=0.50,
+            validation_ratio=0.25,
+            test_ratio=0.25,
+        )
+
+
+def test_split_rejects_train_target_at_validation_start():
+    dataset = MLDataset(
+        samples=[
+            create_sample(
+                1_800_000_000_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_120_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_240_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_360_000,
+                horizon_minutes=1,
+                target_timestamp=1_800_000_480_000,
+            ),
+            create_sample(
+                1_800_000_480_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_600_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_720_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_840_000,
+                horizon_minutes=1,
+            ),
+        ]
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="training targets must be observed before validation starts",
+    ):
+        TemporalDatasetSplitter.split(
+            dataset=dataset,
+            train_ratio=0.50,
+            validation_ratio=0.25,
+            test_ratio=0.25,
+        )
+
+
+def test_split_rejects_validation_target_after_test_start():
+    dataset = MLDataset(
+        samples=[
+            create_sample(
+                1_800_000_000_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_120_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_240_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_360_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_480_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_600_000,
+                horizon_minutes=1,
+                target_timestamp=1_800_000_900_000,
+            ),
+            create_sample(
+                1_800_000_720_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_840_000,
+                horizon_minutes=1,
+            ),
+        ]
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="validation targets must be observed before test starts",
+    ):
+        TemporalDatasetSplitter.split(
+            dataset=dataset,
+            train_ratio=0.50,
+            validation_ratio=0.25,
+            test_ratio=0.25,
+        )
+
+
+def test_split_checks_latest_target_timestamp_across_partition():
+    dataset = MLDataset(
+        samples=[
+            create_sample(
+                1_800_000_000_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_120_000,
+                horizon_minutes=1,
+                target_timestamp=1_800_000_600_000,
+            ),
+            create_sample(
+                1_800_000_240_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_360_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_480_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_600_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_720_000,
+                horizon_minutes=1,
+            ),
+            create_sample(
+                1_800_000_840_000,
+                horizon_minutes=1,
+            ),
+        ]
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="training targets must be observed before validation starts",
     ):
         TemporalDatasetSplitter.split(
             dataset=dataset,

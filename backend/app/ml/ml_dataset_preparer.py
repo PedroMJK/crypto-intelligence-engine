@@ -21,6 +21,7 @@ class MLDatasetPreparer:
             features=features,
             horizon_minutes=outcome.horizon_minutes,
             target=outcome.future_return,
+            target_timestamp=outcome.evaluation_timestamp,
         )
 
     @staticmethod

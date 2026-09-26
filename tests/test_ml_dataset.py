@@ -13,7 +13,14 @@ def create_ml_sample(
     feature_timestamp=1_800_000_000_000,
     horizon_minutes=15,
     target=0.05,
+    target_timestamp=None,
 ):
+    if target_timestamp is None:
+        target_timestamp = (
+            feature_timestamp
+            + horizon_minutes * 60_000
+        )
+
     return MLSample(
         features=FeatureSnapshot(
             symbol=symbol,
@@ -31,6 +38,7 @@ def create_ml_sample(
         ),
         horizon_minutes=horizon_minutes,
         target=target,
+        target_timestamp=target_timestamp,
     )
 
 

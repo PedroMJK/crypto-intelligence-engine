@@ -38,6 +38,7 @@ def test_ml_sample_preserves_features():
         features=features,
         horizon_minutes=15,
         target=0.025,
+        target_timestamp=1_800_000_900_000,
     )
 
     assert sample.features is features
@@ -48,6 +49,7 @@ def test_ml_sample_preserves_horizon_minutes():
         features=create_feature_snapshot(),
         horizon_minutes=30,
         target=-0.01,
+        target_timestamp=1_800_001_800_000,
     )
 
     assert sample.horizon_minutes == 30
@@ -58,9 +60,82 @@ def test_ml_sample_preserves_continuous_target():
         features=create_feature_snapshot(),
         horizon_minutes=15,
         target=-0.0275,
+        target_timestamp=1_800_000_900_000,
     )
 
     assert sample.target == -0.0275
+
+
+def test_ml_sample_preserves_target_timestamp():
+    sample = MLSample(
+        features=create_feature_snapshot(),
+        horizon_minutes=15,
+        target=0.025,
+        target_timestamp=1_800_000_900_000,
+    )
+
+    assert sample.target_timestamp == 1_800_000_900_000
+
+
+@pytest.mark.parametrize(
+    "target_timestamp",
+    [
+        None,
+        1.5,
+        True,
+        "1800000900000",
+        [],
+        {},
+    ],
+)
+def test_ml_sample_rejects_non_integer_target_timestamp(
+    target_timestamp,
+):
+    with pytest.raises(TypeError):
+        MLSample(
+            features=create_feature_snapshot(),
+            horizon_minutes=15,
+            target=0.025,
+            target_timestamp=target_timestamp,
+        )
+
+
+def test_ml_sample_rejects_target_timestamp_before_horizon_end():
+    with pytest.raises(ValueError):
+        MLSample(
+            features=create_feature_snapshot(
+                feature_timestamp=1_800_000_000_000,
+            ),
+            horizon_minutes=15,
+            target=0.025,
+            target_timestamp=1_800_000_899_999,
+        )
+
+
+def test_ml_sample_accepts_target_timestamp_at_horizon_end():
+    sample = MLSample(
+        features=create_feature_snapshot(
+            feature_timestamp=1_800_000_000_000,
+        ),
+        horizon_minutes=15,
+        target=0.025,
+        target_timestamp=1_800_000_900_000,
+    )
+
+    assert sample.target_timestamp == 1_800_000_900_000
+
+
+def test_ml_sample_accepts_target_timestamp_after_horizon_end():
+    sample = MLSample(
+        features=create_feature_snapshot(
+            feature_timestamp=1_800_000_000_000,
+        ),
+        horizon_minutes=15,
+        target=0.025,
+        target_timestamp=1_800_001_200_000,
+    )
+
+    assert sample.target_timestamp == 1_800_001_200_000
 
 
 @pytest.mark.parametrize(
@@ -81,6 +156,7 @@ def test_ml_sample_accepts_finite_continuous_target(
         features=create_feature_snapshot(),
         horizon_minutes=15,
         target=target,
+        target_timestamp=1_800_000_900_000,
     )
 
     assert sample.target == target
@@ -106,6 +182,7 @@ def test_ml_sample_rejects_invalid_features(
             features=features,
             horizon_minutes=15,
             target=0.01,
+            target_timestamp=1_800_000_900_000,
         )
 
 
@@ -128,6 +205,7 @@ def test_ml_sample_rejects_non_integer_horizon(
             features=create_feature_snapshot(),
             horizon_minutes=horizon_minutes,
             target=0.01,
+            target_timestamp=1_800_000_900_000,
         )
 
 
@@ -147,6 +225,7 @@ def test_ml_sample_rejects_non_positive_horizon(
             features=create_feature_snapshot(),
             horizon_minutes=horizon_minutes,
             target=0.01,
+            target_timestamp=1_800_000_900_000,
         )
 
 
@@ -168,6 +247,7 @@ def test_ml_sample_rejects_non_numeric_target(
             features=create_feature_snapshot(),
             horizon_minutes=15,
             target=target,
+            target_timestamp=1_800_000_900_000,
         )
 
 
@@ -187,4 +267,5 @@ def test_ml_sample_rejects_non_finite_target(
             features=create_feature_snapshot(),
             horizon_minutes=15,
             target=target,
+            target_timestamp=1_800_000_900_000,
         )
