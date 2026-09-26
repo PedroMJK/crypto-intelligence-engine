@@ -190,7 +190,7 @@ Legenda:
 * [x] Register simulated exits
 * [x] Simulate fees
 * [x] Simulate slippage
-* [ ] Create performance metrics
+* [x] Create performance metrics
 
 ---
 
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Create performance metrics.
+FastAPI.
