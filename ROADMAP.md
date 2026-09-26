@@ -171,7 +171,7 @@ Legenda:
 # Phase 9 — Machine Learning
 
 * [x] Create feature pipeline
-* [ ] Prepare dataset
+* [x] Prepare dataset
 * [ ] Split training/validation/test datasets
 * [ ] Create baseline
 * [ ] Random Forest

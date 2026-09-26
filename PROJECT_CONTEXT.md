@@ -1322,6 +1322,19 @@ A comparação também não introduz probabilidades, sinais de BUY/SELL, recomen
 - Feature generation remains tied to information available at the analysis reference time to preserve temporal causality and prevent leakage.
 - Existing score semantics remain unchanged: directional scores are not probabilities, while confidence, contradiction, and volume retain their established meanings.
 
+#### ML Dataset
+
+- `MLSample` represents one immutable supervised-learning observation composed of a `FeatureSnapshot`, `horizon_minutes`, and a continuous `target`.
+- The initial target is the historical `PredictionOutcome.future_return`; it remains continuous and is not converted into UP/DOWN classes, binary labels, thresholds, or probabilities.
+- Future outcome information is used only as the supervised target and is never added to the input feature mapping.
+- `MLDatasetPreparer.prepare_sample()` pairs a `FeatureSnapshot` with a `PredictionOutcome` only when their symbols match and the feature timestamp matches the prediction timestamp.
+- The sample horizon is preserved from the corresponding `PredictionOutcome`.
+- `MLDataset` stores a non-empty immutable tuple of `MLSample` instances.
+- Datasets may contain multiple symbols, multiple horizons, repeated observations, and preserve the caller-provided order.
+- Dataset preparation does not sort, deduplicate, group, shuffle, normalize, scale, split, train models, create probabilities, or generate trading signals.
+- `MLDatasetPreparer.prepare_dataset()` transforms a non-empty list or tuple of `(FeatureSnapshot, PredictionOutcome)` pairs into an `MLDataset` while reusing the single-sample compatibility validation.
+- Train/validation/test separation remains a distinct responsibility of the next Machine Learning task.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
