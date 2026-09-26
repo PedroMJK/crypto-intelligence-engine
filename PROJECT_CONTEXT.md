@@ -935,7 +935,7 @@ O evaluator não consulta diretamente fontes de mercado e não calcula métricas
 
 Para o horizonte de 1 minuto, essa estrutura permite avaliar uma previsão somente quando a observação ocorre em `t0 + 1 minuto` ou depois desse limite.
 
-O mesmo contrato foi validado explicitamente para os horizontes de 5 e 15 minutos.
+O mesmo contrato foi validado explicitamente para os horizontes de 5, 15 e 30 minutos.
 
 Para 5 minutos:
 
@@ -947,12 +947,18 @@ Para 15 minutos:
 
 * uma avaliação anterior a `t0 + 900_000 ms` é rejeitada;
 * uma avaliação exatamente em `t0 + 900_000 ms` é aceita;
+* uma avaliação posterior ao limite também é aceita.
+
+Para 30 minutos:
+
+* uma avaliação anterior a `t0 + 1_800_000 ms` é rejeitada;
+* uma avaliação exatamente em `t0 + 1_800_000 ms` é aceita;
 * uma avaliação posterior ao limite também é aceita;
 * `future_return` continua sendo derivado dos preços de referência e avaliação.
 
-As validações dos horizontes de 5 e 15 minutos não exigem alterações adicionais no código de produção, confirmando que `PredictionOutcome` e `OutcomeEvaluator` permanecem independentes de um horizonte específico.
+As validações dos horizontes de 5, 15 e 30 minutos não exigem alterações adicionais no código de produção, confirmando que `PredictionOutcome` e `OutcomeEvaluator` permanecem independentes de um horizonte específico.
 
-A mesma estrutura permanece reutilizável para o horizonte posterior de 30 minutos sem criar um modelo de outcome específico para esse horizonte.
+Com isso, o mesmo contrato de outcome está explicitamente validado para todos os horizontes atualmente definidos pelo Prediction Lab: 1, 5, 15 e 30 minutos.
 
 ### Machine Learning
 

@@ -140,7 +140,7 @@ Legenda:
 * [x] Evaluate result after 1 minute
 * [x] Evaluate result after 5 minutes
 * [x] Evaluate result after 15 minutes
-* [ ] Evaluate result after 30 minutes
+* [x] Evaluate result after 30 minutes
 * [ ] Calculate metrics
 * [ ] Create statistical report
 
@@ -222,4 +222,4 @@ Legenda:
 
 # Current Task
 
-Evaluate result after 30 minutes.
+Calculate metrics.
