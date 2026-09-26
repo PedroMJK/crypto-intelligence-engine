@@ -275,3 +275,194 @@ def test_position_simulator_reports_no_open_position_initially():
     simulator = PositionSimulator()
 
     assert simulator.has_open_position is False
+
+
+def test_position_simulator_registers_simulated_entry():
+    simulator = PositionSimulator()
+
+    position = simulator.register_entry(
+        symbol="BTCUSDT",
+        side=PositionSide.LONG,
+        quantity=0.5,
+        entry_price=50_000.0,
+        entry_timestamp=1_700_000_000_000,
+    )
+
+    assert isinstance(
+        position,
+        SimulatedPosition,
+    )
+
+    assert position.symbol == "BTCUSDT"
+    assert position.side is PositionSide.LONG
+    assert position.quantity == 0.5
+    assert position.entry_price == 50_000.0
+    assert (
+        position.entry_timestamp
+        == 1_700_000_000_000
+    )
+
+
+def test_registered_entry_becomes_current_position():
+    simulator = PositionSimulator()
+
+    position = simulator.register_entry(
+        symbol="ETHUSDT",
+        side=PositionSide.SHORT,
+        quantity=2.0,
+        entry_price=3_000.0,
+        entry_timestamp=1_700_000_000_000,
+    )
+
+    assert simulator.current_position is position
+
+
+def test_position_simulator_reports_open_position_after_entry():
+    simulator = PositionSimulator()
+
+    simulator.register_entry(
+        symbol="BTCUSDT",
+        side=PositionSide.LONG,
+        quantity=0.5,
+        entry_price=50_000.0,
+        entry_timestamp=1_700_000_000_000,
+    )
+
+    assert simulator.has_open_position is True
+
+
+def test_position_simulator_rejects_second_open_position():
+    simulator = PositionSimulator()
+
+    first_position = simulator.register_entry(
+        symbol="BTCUSDT",
+        side=PositionSide.LONG,
+        quantity=0.5,
+        entry_price=50_000.0,
+        entry_timestamp=1_700_000_000_000,
+    )
+
+    with pytest.raises(
+        RuntimeError,
+        match="an open position already exists",
+    ):
+        simulator.register_entry(
+            symbol="ETHUSDT",
+            side=PositionSide.SHORT,
+            quantity=2.0,
+            entry_price=3_000.0,
+            entry_timestamp=1_700_000_060_000,
+        )
+
+    assert simulator.current_position is first_position
+
+
+def test_failed_second_entry_preserves_existing_position():
+    simulator = PositionSimulator()
+
+    first_position = simulator.register_entry(
+        symbol="BTCUSDT",
+        side=PositionSide.LONG,
+        quantity=0.5,
+        entry_price=50_000.0,
+        entry_timestamp=1_700_000_000_000,
+    )
+
+    try:
+        simulator.register_entry(
+            symbol="ETHUSDT",
+            side=PositionSide.SHORT,
+            quantity=2.0,
+            entry_price=3_000.0,
+            entry_timestamp=1_700_000_060_000,
+        )
+    except RuntimeError:
+        pass
+
+    assert simulator.current_position is first_position
+    assert simulator.has_open_position is True
+
+
+@pytest.mark.parametrize(
+    (
+        "symbol",
+        "side",
+        "quantity",
+        "entry_price",
+        "entry_timestamp",
+        "expected_exception",
+        "expected_message",
+    ),
+    [
+        (
+            "",
+            PositionSide.LONG,
+            0.5,
+            50_000.0,
+            1_700_000_000_000,
+            ValueError,
+            "symbol must not be empty",
+        ),
+        (
+            "BTCUSDT",
+            "long",
+            0.5,
+            50_000.0,
+            1_700_000_000_000,
+            TypeError,
+            "side must be a PositionSide",
+        ),
+        (
+            "BTCUSDT",
+            PositionSide.LONG,
+            0.0,
+            50_000.0,
+            1_700_000_000_000,
+            ValueError,
+            "quantity must be finite and greater than zero",
+        ),
+        (
+            "BTCUSDT",
+            PositionSide.LONG,
+            0.5,
+            0.0,
+            1_700_000_000_000,
+            ValueError,
+            "entry_price must be finite and greater than zero",
+        ),
+        (
+            "BTCUSDT",
+            PositionSide.LONG,
+            0.5,
+            50_000.0,
+            -1,
+            ValueError,
+            "entry_timestamp must not be negative",
+        ),
+    ],
+)
+def test_position_simulator_reuses_position_validation_for_entries(
+    symbol,
+    side,
+    quantity,
+    entry_price,
+    entry_timestamp,
+    expected_exception,
+    expected_message,
+):
+    simulator = PositionSimulator()
+
+    with pytest.raises(
+        expected_exception,
+        match=expected_message,
+    ):
+        simulator.register_entry(
+            symbol=symbol,
+            side=side,
+            quantity=quantity,
+            entry_price=entry_price,
+            entry_timestamp=entry_timestamp,
+        )
+
+    assert simulator.current_position is None
+    assert simulator.has_open_position is False

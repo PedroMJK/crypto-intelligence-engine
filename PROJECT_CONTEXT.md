@@ -1509,6 +1509,33 @@ The position model also does not yet contain exit price, exit timestamp, fees, s
 
 The paper trading layer is simulation-only. `LONG` and `SHORT` represent simulated position directions and do not constitute trading recommendations or trigger real exchange execution.
 
+### Simulated Entries
+
+`PositionSimulator` can register a simulated entry when no position is currently open.
+
+A simulated entry receives:
+
+- `symbol`
+- `side`
+- `quantity`
+- `entry_price`
+- `entry_timestamp`
+
+The simulator delegates domain validation to `SimulatedPosition` rather than duplicating position validation rules.
+
+After a valid entry is registered:
+
+- a new immutable `SimulatedPosition` is created
+- `current_position` references that position
+- `has_open_position` becomes `True`
+- the created position is returned to the caller
+
+A simulator supports only one open position at a time. Attempting to register another entry while a position is already open raises an error and preserves the existing position without modification.
+
+If position validation fails, the invalid position is not registered and the simulator remains without an open position.
+
+Entry registration remains simulation-only. It does not execute exchange orders, communicate with Binance, calculate fees or slippage, close positions, calculate P&L, or persist the position to a database.
+
 ## Tecnologias inicialmente previstas
 
 ### Backend
