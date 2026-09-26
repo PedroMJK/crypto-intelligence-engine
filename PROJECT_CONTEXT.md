@@ -1628,6 +1628,76 @@ Slippage calculation does not mutate `SimulatedPosition` or `SimulatedExit`. The
 
 The slippage layer does not yet calculate realized P&L, ROI, leverage, capital performance, aggregate trade costs, or other performance metrics. It also does not estimate real market impact from an order book, execute exchange orders, or communicate with live trading APIs.
 
+### Performance Metrics
+
+Paper Trading can evaluate completed simulated trades through the immutable `TradePerformance` model and aggregate multiple completed trade results through `PerformanceMetrics`.
+
+`TradePerformance` combines a `SimulatedExit` with configurable entry fee, exit fee, and slippage rates to calculate the result of one completed simulated trade.
+
+The calculation first applies adverse slippage to the reference entry and exit prices through `SlippageSimulator`. Transaction fees are then calculated from the resulting simulated execution prices through the generic `FeeSimulator.calculate()` operation.
+
+This means fees are based on the simulated executed notional rather than the original reference prices.
+
+For LONG positions, gross P&L is calculated as:
+
+`(exit_execution_price - entry_execution_price) * quantity`
+
+For SHORT positions, gross P&L is calculated as:
+
+`(entry_execution_price - exit_execution_price) * quantity`
+
+The resulting trade metrics include:
+
+- entry execution price
+- exit execution price
+- gross P&L
+- entry fee
+- exit fee
+- total fees
+- net P&L
+- return rate
+
+Total fees are calculated as the sum of entry and exit fees.
+
+Net P&L is calculated as:
+
+`gross_pnl - total_fees`
+
+The trade return rate is calculated relative to the simulated executed entry notional:
+
+`net_pnl / (entry_execution_price * quantity)`
+
+The return rate represents the result of the individual simulated trade relative to its entry notional. It is not an account-level ROI and does not assume account capital, leverage, margin, or portfolio allocation.
+
+`PerformanceMetrics` aggregates a list or tuple of completed `TradePerformance` results.
+
+The aggregate metrics include:
+
+- total trades
+- winning trades
+- losing trades
+- breakeven trades
+- win rate
+- aggregate gross P&L
+- aggregate total fees
+- aggregate net P&L
+
+Trade classification is based on net P&L:
+
+- positive net P&L is a winning trade
+- negative net P&L is a losing trade
+- zero net P&L is a breakeven trade
+
+Win rate is calculated as:
+
+`winning_trades / total_trades`
+
+Breakeven trades remain part of the total-trade denominator. An empty trade collection produces zero-valued aggregate metrics and a zero win rate.
+
+Individual trade return rates are not summed or interpreted as portfolio performance because the simulator does not currently maintain an account-equity or capital-allocation model.
+
+Performance calculations remain simulation-only. They do not introduce leverage, liquidation, margin, account balance, portfolio equity, live exchange execution, trading recommendations, or real capital management.
+
 ## Tecnologias inicialmente previstas
 
 ### Backend
