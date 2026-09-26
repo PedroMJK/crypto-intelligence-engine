@@ -157,7 +157,9 @@ Legenda:
   * [x] Define immutable backtest dataset
 * [x] Create simulator
   * [x] Add backtest simulator
-* [ ] Prevent look-ahead bias
+* [x] Prevent look-ahead bias
+  * [x] Add temporal look-ahead guard
+  * [x] Integrate guard into backtest simulator
 * [ ] Calculate accuracy
 * [ ] Calculate precision
 * [ ] Calculate recall
@@ -229,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Prevent look-ahead bias.
+Calculate accuracy.

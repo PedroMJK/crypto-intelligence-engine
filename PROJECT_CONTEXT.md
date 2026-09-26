@@ -1134,6 +1134,30 @@ O fluxo inicial de Backtesting passa a ser:
 
 A prevenção explícita de look-ahead bias durante a execução histórica permanece responsabilidade da próxima etapa da fase de Backtesting.
 
+#### Look-Ahead Guard
+
+O componente `LookAheadGuard` estabelece uma fronteira explícita de causalidade temporal para a execução histórica do Backtesting.
+
+Antes de uma amostra ser avaliada pelo `MetricsCalculator`, o `BacktestSimulator` executa `LookAheadGuard.validate()` sobre o `BacktestSample`.
+
+O Guard valida que:
+
+* o objeto recebido é uma instância de `BacktestSample`;
+* `FeatureSnapshot.feature_timestamp` corresponde a `PredictionRecord.prediction_timestamp`;
+* `PredictionOutcome.evaluation_timestamp` não ocorre antes de `PredictionRecord.prediction_timestamp + horizon_minutes`.
+
+O fluxo de avaliação passa a ser:
+
+`BacktestDataset -> BacktestSimulator -> LookAheadGuard -> MetricsCalculator -> PredictionMetrics`
+
+A validação ocorre antes do cálculo das métricas de cada amostra.
+
+O `LookAheadGuard` não modifica features, predictions ou outcomes, não calcula métricas e não gera previsões ou sinais de trading.
+
+A proteção fornecida nesta camada é temporal. O Guard não tenta inferir semanticamente se o valor de uma feature foi calculado utilizando informação futura. A causalidade da geração das features continua dependendo da pipeline responsável por construí-las, que deve utilizar somente informações disponíveis e confirmadas até `feature_timestamp`.
+
+A presença de `PredictionOutcome` no `BacktestSample` existe exclusivamente para avaliação histórica e não torna o outcome disponível para a geração do `FeatureSnapshot` ou do `PredictionRecord`.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
