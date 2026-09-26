@@ -170,7 +170,7 @@ Legenda:
 
 # Phase 9 — Machine Learning
 
-* [ ] Create feature pipeline
+* [x] Create feature pipeline
 * [ ] Prepare dataset
 * [ ] Split training/validation/test datasets
 * [ ] Create baseline
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Create feature pipeline.
+Prepare dataset.
