@@ -1,8 +1,11 @@
+from unittest.mock import patch
+
 import pytest
 
 from backend.app.backtesting.backtest_dataset import BacktestDataset
 from backend.app.backtesting.backtest_sample import BacktestSample
 from backend.app.backtesting.backtest_simulator import BacktestSimulator
+from backend.app.backtesting.look_ahead_guard import LookAheadGuard
 from backend.app.predictions.feature_snapshot import FeatureSnapshot
 from backend.app.predictions.prediction_metrics import PredictionMetrics
 from backend.app.predictions.prediction_outcome import PredictionOutcome
@@ -231,3 +234,27 @@ def test_backtest_simulator_does_not_modify_dataset():
     assert dataset.samples == original_samples
     assert dataset.samples[0] is first
     assert dataset.samples[1] is second
+
+
+def test_backtest_simulator_validates_each_sample_with_look_ahead_guard():
+    first = create_sample(
+        timestamp=1_800_000_000_000,
+    )
+    second = create_sample(
+        timestamp=1_800_000_300_000,
+    )
+
+    dataset = BacktestDataset(
+        samples=[first, second],
+    )
+
+    with patch.object(
+        LookAheadGuard,
+        "validate",
+        wraps=LookAheadGuard.validate,
+    ) as validate:
+        BacktestSimulator.run(dataset)
+
+    assert validate.call_count == 2
+    validate.assert_any_call(first)
+    validate.assert_any_call(second)

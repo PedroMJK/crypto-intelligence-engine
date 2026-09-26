@@ -1,4 +1,5 @@
 from backend.app.backtesting.backtest_dataset import BacktestDataset
+from backend.app.backtesting.look_ahead_guard import LookAheadGuard
 from backend.app.predictions.metrics_calculator import MetricsCalculator
 from backend.app.predictions.prediction_metrics import PredictionMetrics
 
@@ -11,10 +12,7 @@ class BacktestSimulator:
         BacktestSimulator._validate_dataset(dataset)
 
         return tuple(
-            MetricsCalculator.calculate(
-                sample.prediction,
-                sample.outcome,
-            )
+            BacktestSimulator._evaluate_sample(sample)
             for sample in dataset.samples
         )
 
@@ -26,3 +24,14 @@ class BacktestSimulator:
             raise TypeError(
                 "dataset must be a BacktestDataset"
             )
+
+    @staticmethod
+    def _evaluate_sample(
+        sample,
+    ) -> PredictionMetrics:
+        LookAheadGuard.validate(sample)
+
+        return MetricsCalculator.calculate(
+            sample.prediction,
+            sample.outcome,
+        )
