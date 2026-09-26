@@ -1309,6 +1309,19 @@ A comparação é descritiva. O componente não ordena modelos por desempenho, n
 
 A comparação também não introduz probabilidades, sinais de BUY/SELL, recomendações de trading, treinamento de modelos, hiperparâmetros ou seleção automática de modelos. Essas responsabilidades permanecem separadas da camada de Backtesting.
 
+#### Feature Pipeline
+
+- `FeaturePipeline` transforms `AnalysisRecord` instances into immutable `FeatureSnapshot` instances for Machine Learning.
+- The pipeline preserves the analysis symbol and uses `reference_timestamp` as the feature timestamp.
+- The initial feature set contains `technical_score`, `flow_score`, `momentum_score`, `structure_score`, `direction_score`, `volume_score`, `confidence`, and `contradiction`.
+- `reference_price` is not included in the initial feature set.
+- `build()` transforms one `AnalysisRecord`.
+- `build_many()` transforms a non-empty list or tuple of `AnalysisRecord` instances and returns an ordered tuple of snapshots.
+- Batch transformation preserves input order and does not sort, deduplicate, group, or otherwise reorganize observations.
+- The pipeline does not create labels or targets, prepare training datasets, split datasets, train models, calculate probabilities, or access future outcomes.
+- Feature generation remains tied to information available at the analysis reference time to preserve temporal causality and prevent leakage.
+- Existing score semantics remain unchanged: directional scores are not probabilities, while confidence, contradiction, and volume retain their established meanings.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
