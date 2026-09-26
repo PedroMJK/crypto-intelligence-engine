@@ -174,7 +174,7 @@ Legenda:
 * [x] Prepare dataset
 * [x] Split training/validation/test datasets
 * [x] Create baseline
-* [ ] Random Forest
+* [x] Random Forest
 * [ ] XGBoost
 * [ ] LightGBM
 * [ ] Probability calibration
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Create baseline.
+XGBoost.
