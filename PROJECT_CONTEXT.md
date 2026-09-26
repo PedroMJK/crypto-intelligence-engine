@@ -1562,6 +1562,35 @@ The exit layer records only the simulated closing price and timestamp. It does n
 
 Simulated exits do not execute exchange orders or communicate with live trading APIs.
 
+### Simulated Fees
+
+Paper Trading can simulate transaction fees through the stateless `FeeSimulator`.
+
+The generic fee calculation is based on the simulated notional value:
+
+`fee = price * quantity * fee_rate`
+
+The fee rate is supplied explicitly to the simulator rather than being hardcoded to a specific exchange, account tier, maker/taker configuration, or discount program.
+
+The generic calculation requires:
+
+- `price` to be a finite positive numeric value
+- `quantity` to be a finite positive numeric value
+- `fee_rate` to be a finite non-negative numeric value
+
+A zero fee rate is valid and represents a simulation without transaction fees.
+
+`FeeSimulator` also integrates the generic calculation with the Paper Trading domain through:
+
+- `calculate_entry_fee()`, which uses the `SimulatedPosition` entry price and quantity
+- `calculate_exit_fee()`, which uses the `SimulatedExit` exit price and the quantity preserved by its original `SimulatedPosition`
+
+Entry and exit fee calculations reuse the same generic fee formula. Position direction does not change the fee calculation because the simulated fee is based on notional value rather than LONG or SHORT direction.
+
+The fee simulator calculates transaction costs independently and does not mutate `SimulatedPosition` or `SimulatedExit`.
+
+Fee simulation does not yet calculate slippage, realized P&L, ROI, leverage, capital performance, aggregate trade costs, or other performance metrics. It also does not execute exchange orders or communicate with live trading APIs.
+
 ## Tecnologias inicialmente previstas
 
 ### Backend

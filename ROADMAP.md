@@ -188,7 +188,7 @@ Legenda:
 * [x] Create position simulator
 * [x] Register simulated entries
 * [x] Register simulated exits
-* [ ] Simulate fees
+* [x] Simulate fees
 * [ ] Simulate slippage
 * [ ] Create performance metrics
 
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Simulate fees.
+Simulate slippage.
