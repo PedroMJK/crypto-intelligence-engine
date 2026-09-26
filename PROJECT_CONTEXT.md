@@ -1477,6 +1477,38 @@ The resulting `ensemble_return` remains a continuous predicted future return, no
 
 Integration tests verify compatibility with the real Random Forest, XGBoost, and LightGBM regressors, including preservation of their horizon-specific prediction contracts.
 
+## Phase 10 — Paper Trading
+
+### Position Simulator
+
+The paper trading layer introduces simulated position state without executing real exchange orders or interacting with live trading APIs.
+
+`PositionSide` defines the supported simulated position directions:
+
+- `LONG`
+- `SHORT`
+
+`SimulatedPosition` is an immutable domain object that preserves the initial state of a simulated position:
+
+- `symbol`
+- `side`
+- `quantity`
+- `entry_price`
+- `entry_timestamp`
+
+Symbols must be non-empty strings. Quantity and entry price must be finite positive numeric values, and the entry timestamp must be a non-negative integer.
+
+`PositionSimulator` owns the current simulated position state. A newly created simulator starts without an open position:
+
+- `current_position` is `None`
+- `has_open_position` is `False`
+
+The initial simulator deliberately does not register entries or exits. Those behaviors are implemented separately by the subsequent Paper Trading roadmap tasks.
+
+The position model also does not yet contain exit price, exit timestamp, fees, slippage, leverage, realized P&L, or performance metrics. These concerns remain outside the initial position simulator scope.
+
+The paper trading layer is simulation-only. `LONG` and `SHORT` represent simulated position directions and do not constitute trading recommendations or trigger real exchange execution.
+
 ## Tecnologias inicialmente previstas
 
 ### Backend
