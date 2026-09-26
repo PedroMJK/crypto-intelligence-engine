@@ -102,6 +102,23 @@ def test_ml_dataset_preparer_uses_future_return_as_target():
     assert result.target == outcome.future_return
 
 
+def test_ml_dataset_preparer_uses_evaluation_timestamp_as_target_timestamp():
+    features = create_feature_snapshot()
+    outcome = create_prediction_outcome(
+        evaluation_timestamp=1_800_001_200_000,
+    )
+
+    result = MLDatasetPreparer.prepare_sample(
+        features,
+        outcome,
+    )
+
+    assert (
+        result.target_timestamp
+        == outcome.evaluation_timestamp
+    )
+
+
 def test_ml_dataset_preparer_preserves_negative_future_return():
     features = create_feature_snapshot()
     outcome = create_prediction_outcome(

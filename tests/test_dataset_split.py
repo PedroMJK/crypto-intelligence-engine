@@ -30,6 +30,10 @@ def create_ml_dataset(
         ),
         horizon_minutes=15,
         target=0.05,
+        target_timestamp=(
+            feature_timestamp
+            + 15 * 60_000
+        ),
     )
 
     return MLDataset(

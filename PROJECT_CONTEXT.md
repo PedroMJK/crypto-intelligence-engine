@@ -1324,11 +1324,13 @@ A comparação também não introduz probabilidades, sinais de BUY/SELL, recomen
 
 #### ML Dataset
 
-- `MLSample` represents one immutable supervised-learning observation composed of a `FeatureSnapshot`, `horizon_minutes`, and a continuous `target`.
+- `MLSample` represents one immutable supervised-learning observation composed of a `FeatureSnapshot`, `horizon_minutes`, a continuous `target`, and `target_timestamp`.
 - The initial target is the historical `PredictionOutcome.future_return`; it remains continuous and is not converted into UP/DOWN classes, binary labels, thresholds, or probabilities.
-- Future outcome information is used only as the supervised target and is never added to the input feature mapping.
+- `target_timestamp` represents the actual time at which the supervised target became observable and must be an integer timestamp at or after the nominal horizon end defined by `feature_timestamp + horizon_minutes`.
+- Future outcome information is used only as the supervised target and its observation timestamp and is never added to the input feature mapping.
 - `MLDatasetPreparer.prepare_sample()` pairs a `FeatureSnapshot` with a `PredictionOutcome` only when their symbols match and the feature timestamp matches the prediction timestamp.
 - The sample horizon is preserved from the corresponding `PredictionOutcome`.
+- `PredictionOutcome.evaluation_timestamp` is preserved as `MLSample.target_timestamp`, so downstream temporal validation uses the actual outcome observation time rather than reconstructing it only from the nominal horizon.
 - `MLDataset` stores a non-empty immutable tuple of `MLSample` instances.
 - Datasets may contain multiple symbols, multiple horizons, repeated observations, and preserve the caller-provided order.
 - Dataset preparation does not sort, deduplicate, group, shuffle, normalize, scale, split, train models, create probabilities, or generate trading signals.
@@ -1357,7 +1359,19 @@ The dataset must already be in chronological order by `FeatureSnapshot.feature_t
 - `validation`
 - `test`
 
-The splitter performs chronological feature-time separation. Future outcomes remain supervised-learning targets and are never input features. This split alone does not claim to implement target-window purging or embargoing for overlapping future-label horizons; those concerns must be handled explicitly when defining leakage-safe model evaluation.
+The splitter enforces both feature-time chronology and target-time availability across partition boundaries. Future outcomes remain supervised-learning targets and are never input features.
+
+For target-time leakage protection:
+
+- every training target must be observed strictly before the first validation feature timestamp;
+- every validation target must be observed strictly before the first test feature timestamp;
+- equality with the next partition's first feature timestamp is rejected;
+- the latest `target_timestamp` across the entire preceding partition is used for validation rather than assuming that the last feature sample also has the latest target;
+- overlapping target windows are rejected instead of being silently purged, reordered, or moved between partitions.
+
+This protection uses the actual `MLSample.target_timestamp` propagated from `PredictionOutcome.evaluation_timestamp`, rather than inferring target availability only from the nominal prediction horizon.
+
+The splitter does not introduce an automatic purge or configurable embargo interval. Instead, it rejects a requested split whenever the observed target timestamps would cross or touch the next partition's feature-time boundary.
 
 No scaling, model training, probability calibration, trading threshold, BUY/SELL decision, or execution behavior is introduced by this component.
 

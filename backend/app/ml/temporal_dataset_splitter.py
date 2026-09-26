@@ -57,6 +57,11 @@ class TemporalDatasetSplitter:
             validation_samples,
             test_samples,
         )
+        TemporalDatasetSplitter._validate_target_boundaries(
+            train_samples,
+            validation_samples,
+            test_samples,
+        )
 
         return DatasetSplit(
             train=MLDataset(
@@ -188,4 +193,42 @@ class TemporalDatasetSplitter:
         ):
             raise ValueError(
                 "split boundaries must be strictly chronological"
+            )
+
+    @staticmethod
+    def _validate_target_boundaries(
+        train_samples: tuple,
+        validation_samples: tuple,
+        test_samples: tuple,
+    ) -> None:
+        latest_train_target_timestamp = max(
+            sample.target_timestamp
+            for sample in train_samples
+        )
+        validation_first_feature_timestamp = (
+            validation_samples[0].features.feature_timestamp
+        )
+
+        if (
+            latest_train_target_timestamp
+            >= validation_first_feature_timestamp
+        ):
+            raise ValueError(
+                "training targets must be observed before validation starts"
+            )
+
+        latest_validation_target_timestamp = max(
+            sample.target_timestamp
+            for sample in validation_samples
+        )
+        test_first_feature_timestamp = (
+            test_samples[0].features.feature_timestamp
+        )
+
+        if (
+            latest_validation_target_timestamp
+            >= test_first_feature_timestamp
+        ):
+            raise ValueError(
+                "validation targets must be observed before test starts"
             )
