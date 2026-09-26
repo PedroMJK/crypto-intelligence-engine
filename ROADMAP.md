@@ -172,7 +172,7 @@ Legenda:
 
 * [x] Create feature pipeline
 * [x] Prepare dataset
-* [ ] Split training/validation/test datasets
+* [x] Split training/validation/test datasets
 * [ ] Create baseline
 * [ ] Random Forest
 * [ ] XGBoost
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Prepare dataset.
+Create baseline.
