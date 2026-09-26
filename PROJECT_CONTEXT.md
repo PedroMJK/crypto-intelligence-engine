@@ -960,6 +960,59 @@ As validações dos horizontes de 5, 15 e 30 minutos não exigem alterações ad
 
 Com isso, o mesmo contrato de outcome está explicitamente validado para todos os horizontes atualmente definidos pelo Prediction Lab: 1, 5, 15 e 30 minutos.
 
+#### Prediction Metrics
+
+O componente `PredictionMetrics` representa um registro imutável das métricas calculadas para uma previsão avaliada em um horizonte específico.
+
+O registro preserva:
+
+* `symbol`;
+* `prediction_timestamp`;
+* `horizon_minutes`;
+* `direction_score`;
+* `future_return`;
+* `directional_alignment`;
+* `absolute_return`.
+
+O `direction_score` continua representando somente a orientação direcional contínua registrada pela previsão, dentro do intervalo `[-1, +1]`.
+
+O `future_return` preserva o retorno futuro observado pelo `PredictionOutcome` e não é convertido em categoria, probabilidade ou resultado de trading.
+
+O `absolute_return` representa somente a magnitude absoluta do movimento observado:
+
+`absolute_return = abs(future_return)`
+
+O `directional_alignment` representa o alinhamento contínuo entre a orientação registrada pela previsão e o retorno futuro observado:
+
+`directional_alignment = direction_score * future_return`
+
+Valores positivos de `directional_alignment` indicam que `direction_score` e `future_return` possuem orientação compatível, enquanto valores negativos indicam orientação oposta. Valor zero pode resultar de uma previsão sem orientação direcional ou de retorno futuro igual a zero.
+
+`directional_alignment` não representa accuracy, probabilidade, lucro, recomendação de trading ou classificação de uma previsão como correta ou incorreta.
+
+O `PredictionMetrics` valida e preserva as métricas calculadas, mas não é responsável por derivá-las.
+
+#### Metrics Calculator
+
+O componente `MetricsCalculator` calcula `PredictionMetrics` a partir de um `PredictionRecord` e de um `PredictionOutcome` correspondente.
+
+Antes do cálculo, prediction e outcome devem representar a mesma observação lógica. Para isso, devem possuir os mesmos:
+
+* `symbol`;
+* `prediction_timestamp`;
+* `reference_price`.
+
+Após essa validação, o calculator preserva o `direction_score` da previsão e o `future_return` do outcome e deriva:
+
+* `absolute_return` como o valor absoluto de `future_return`;
+* `directional_alignment` como o produto entre `direction_score` e `future_return`.
+
+O cálculo permanece contínuo e não introduz thresholds direcionais arbitrários.
+
+Nesta etapa, o Prediction Lab não transforma `direction_score` em probabilidade e não calcula `accuracy`, precision, recall, F1 score, P&L, ROI ou sinais `BUY`/`SELL`.
+
+Métricas classificatórias e métricas de backtesting permanecem separadas até que seus contratos e critérios sejam definidos explicitamente nas fases apropriadas.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
