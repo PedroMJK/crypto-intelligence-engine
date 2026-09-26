@@ -163,7 +163,7 @@ Legenda:
 * [x] Calculate accuracy
 * [x] Calculate precision
 * [x] Calculate recall
-* [ ] Calculate confusion matrix
+* [x] Calculate confusion matrix
 * [ ] Compare models
 
 ---
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Calculate confusion matrix.
+Compare models.
