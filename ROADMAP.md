@@ -141,7 +141,9 @@ Legenda:
 * [x] Evaluate result after 5 minutes
 * [x] Evaluate result after 15 minutes
 * [x] Evaluate result after 30 minutes
-* [ ] Calculate metrics
+* [x] Calculate metrics
+  * [x] Define immutable prediction metrics
+  * [x] Add prediction metrics calculator
 * [ ] Create statistical report
 
 ---
@@ -222,4 +224,4 @@ Legenda:
 
 # Current Task
 
-Calculate metrics.
+Create statistical report.
