@@ -1248,6 +1248,34 @@ O resultado pertence ao intervalo `[0, 1]`.
 
 O cálculo não introduz thresholds arbitrários, não interpreta `direction_score` como probabilidade e não produz sinais ou recomendações de trading.
 
+#### Confusion Matrix Calculator
+
+O componente `ConfusionMatrixCalculator` expõe a matriz de confusão da avaliação direcional histórica utilizando diretamente a classificação produzida pelo `DirectionalClassifier`.
+
+O resultado é um `DirectionalClassification` imutável contendo:
+
+* `true_positive`;
+* `false_positive`;
+* `true_negative`;
+* `false_negative`.
+
+O `ConfusionMatrixCalculator` delega integralmente a classificação ao `DirectionalClassifier` e retorna a própria instância de `DirectionalClassification` produzida por ele. O componente não redefine nem duplica as regras de TP, FP, TN ou FN.
+
+A matriz utiliza o contrato classificatório compartilhado:
+
+* `direction_score > 0` e `future_return > 0` -> true positive;
+* `direction_score > 0` e `future_return < 0` -> false positive;
+* `direction_score < 0` e `future_return < 0` -> true negative;
+* `direction_score < 0` e `future_return > 0` -> false negative.
+
+Observações com `direction_score == 0` ou `future_return == 0` permanecem neutras e não entram nas quatro contagens.
+
+Uma coleção contendo somente observações neutras é válida e produz uma classificação com TP, FP, TN e FN iguais a zero. Diferentemente de precision e recall, a matriz de confusão não possui uma divisão que se torne indefinida nesse cenário.
+
+Nenhum threshold de magnitude é aplicado. O componente aceita múltiplos símbolos e horizontes sem agrupamento automático e não introduz normalização, probabilidades, sinais ou recomendações de trading.
+
+`PrecisionCalculator`, `RecallCalculator` e `ConfusionMatrixCalculator` compartilham o mesmo `DirectionalClassifier`, mantendo uma única definição de classificação direcional em toda a camada de Backtesting.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
