@@ -1276,6 +1276,39 @@ Nenhum threshold de magnitude é aplicado. O componente aceita múltiplos símbo
 
 `PrecisionCalculator`, `RecallCalculator` e `ConfusionMatrixCalculator` compartilham o mesmo `DirectionalClassifier`, mantendo uma única definição de classificação direcional em toda a camada de Backtesting.
 
+#### Model Comparison
+
+A comparação de modelos do Backtesting é representada pelos componentes `ModelEvaluation` e `ModelComparator`.
+
+`ModelEvaluation` é uma estrutura imutável que representa a avaliação histórica de um modelo identificado por nome. Ela contém:
+
+* `model_name`;
+* `sample_count`;
+* `accuracy`;
+* `precision`;
+* `recall`;
+* `confusion_matrix`.
+
+`accuracy`, `precision` e `recall` pertencem ao intervalo `[0, 1]` quando definidas. Cada uma também pode ser `None` quando seu denominador matemático não existe para a amostra avaliada. `None` representa uma métrica indefinida e não equivale a `0.0`.
+
+A `confusion_matrix` utiliza o `DirectionalClassification` compartilhado, preservando as contagens de true positive, false positive, true negative e false negative.
+
+O `ModelComparator.evaluate()` avalia um conjunto de `PredictionMetrics` identificado por `model_name`. O componente reutiliza `AccuracyCalculator`, `PrecisionCalculator`, `RecallCalculator` e `ConfusionMatrixCalculator` em vez de duplicar suas fórmulas ou regras classificatórias.
+
+A disponibilidade das métricas é determinada a partir da classificação direcional:
+
+* accuracy é indefinida quando não existem observações direcionais classificadas;
+* precision é indefinida quando não existem predicted positives;
+* recall é indefinida quando não existem actual positives.
+
+O `ModelComparator.compare()` recebe múltiplos modelos e retorna uma tupla imutável de `ModelEvaluation`, preservando a ordem fornecida pelo chamador.
+
+Nesta fase, `model` representa uma estratégia ou versão identificável que produziu um conjunto de métricas históricas. O Backtesting não exige que esse modelo seja um modelo de Machine Learning.
+
+A comparação é descritiva. O componente não ordena modelos por desempenho, não seleciona vencedor e não cria score composto, pesos arbitrários ou ranking automático.
+
+A comparação também não introduz probabilidades, sinais de BUY/SELL, recomendações de trading, treinamento de modelos, hiperparâmetros ou seleção automática de modelos. Essas responsabilidades permanecem separadas da camada de Backtesting.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.

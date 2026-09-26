@@ -164,7 +164,7 @@ Legenda:
 * [x] Calculate precision
 * [x] Calculate recall
 * [x] Calculate confusion matrix
-* [ ] Compare models
+* [x] Compare models
 
 ---
 
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Compare models.
+Create feature pipeline.
