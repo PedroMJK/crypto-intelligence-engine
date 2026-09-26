@@ -176,7 +176,7 @@ Legenda:
 * [x] Create baseline
 * [x] Random Forest
 * [x] XGBoost
-* [ ] LightGBM
+* [x] LightGBM
 * [ ] Probability calibration
 * [ ] Compare with traditional rules
 * [ ] Create ensemble
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-LightGBM.
+Probability calibration.
