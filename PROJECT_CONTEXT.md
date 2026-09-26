@@ -1105,6 +1105,35 @@ A presença de um outcome futuro dentro de uma amostra não o torna informação
 
 Controles adicionais de execução temporal e prevenção explícita de look-ahead bias permanecem responsabilidade das etapas posteriores da fase de Backtesting.
 
+#### Backtest Simulator
+
+O componente `BacktestSimulator` executa a avaliação histórica das previsões registradas em um `BacktestDataset`.
+
+Para cada `BacktestSample`, o simulator utiliza o `PredictionRecord` e o `PredictionOutcome` correspondentes e delega o cálculo ao `MetricsCalculator`.
+
+O resultado de `run()` é uma `tuple` de registros `PredictionMetrics`, preservando a ordem das amostras recebidas pelo dataset.
+
+O simulator:
+
+* aceita somente uma instância de `BacktestDataset`;
+* avalia todas as amostras presentes no dataset;
+* preserva a ordem das amostras;
+* suporta múltiplos símbolos;
+* suporta múltiplos horizontes de avaliação;
+* preserva amostras repetidas como avaliações correspondentes;
+* não modifica o dataset recebido;
+* reutiliza o `MetricsCalculator` como fonte única das fórmulas de avaliação.
+
+O `FeatureSnapshot` permanece preservado como contexto histórico da amostra, mas não é utilizado pelo simulator para recalcular a previsão. O `PredictionRecord` representa a hipótese que já havia sido registrada no momento de referência.
+
+O `BacktestSimulator` não gera previsões, não recalcula features, não cria sinais `BUY` ou `SELL`, não simula capital, posições, taxas, leverage, P&L ou ROI e não calcula accuracy, precision, recall ou confusion matrix.
+
+O fluxo inicial de Backtesting passa a ser:
+
+`BacktestDataset -> BacktestSimulator -> MetricsCalculator -> PredictionMetrics`
+
+A prevenção explícita de look-ahead bias durante a execução histórica permanece responsabilidade da próxima etapa da fase de Backtesting.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.

@@ -155,7 +155,8 @@ Legenda:
 * [x] Create dataset
   * [x] Define immutable backtest sample
   * [x] Define immutable backtest dataset
-* [ ] Create simulator
+* [x] Create simulator
+  * [x] Add backtest simulator
 * [ ] Prevent look-ahead bias
 * [ ] Calculate accuracy
 * [ ] Calculate precision
@@ -228,4 +229,4 @@ Legenda:
 
 # Current Task
 
-Create simulator.
+Prevent look-ahead bias.
