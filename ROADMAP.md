@@ -139,7 +139,7 @@ Legenda:
   * [x] Add in-memory feature registry
 * [x] Evaluate result after 1 minute
 * [x] Evaluate result after 5 minutes
-* [ ] Evaluate result after 15 minutes
+* [x] Evaluate result after 15 minutes
 * [ ] Evaluate result after 30 minutes
 * [ ] Calculate metrics
 * [ ] Create statistical report
@@ -222,4 +222,4 @@ Legenda:
 
 # Current Task
 
-Evaluate result after 15 minutes.
+Evaluate result after 30 minutes.
