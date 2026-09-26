@@ -179,7 +179,7 @@ Legenda:
 * [x] LightGBM
 * [x] Probability calibration
 * [x] Compare with traditional rules
-* [ ] Create ensemble
+* [x] Create ensemble
 
 ---
 
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Create ensemble.
+Create position simulator.

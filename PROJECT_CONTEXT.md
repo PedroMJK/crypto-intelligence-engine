@@ -1457,6 +1457,26 @@ Directional accuracy is evaluated independently per horizon. Neutral predictions
 
 The comparison layer is evaluation-only. It does not retrain models, create trading signals, select a winner automatically, or introduce capital, positions, fees, leverage, P&L, or strategy simulation.
 
+### Return Ensemble
+
+The initial ML ensemble combines compatible return regressors that predict the same continuous quantity: `future_return`.
+
+The ensemble currently combines the trained Random Forest, XGBoost, and LightGBM return regressors through an unweighted arithmetic mean of their `predicted_return` values:
+
+`ensemble_return = sum(model_predictions) / number_of_models`
+
+The ensemble accepts two or more compatible regressors and does not assign arbitrary model weights. Each model receives the same `FeatureSnapshot` and prediction horizon, and each model is invoked exactly once per ensemble prediction.
+
+The ensemble does not train or refit its component models. All regressors must be trained before they are provided to the ensemble, preserving the existing temporal training and evaluation boundaries.
+
+Individual model predictions must remain finite numeric return values. Positive, negative, and exact-zero ensemble returns are preserved without being converted into classifications or probabilities.
+
+The ensemble does not combine `direction_score` from the traditional Intelligence Engine with ML return predictions because those values have different semantics and scales. It also does not directly average calibrated directional probabilities with predicted returns.
+
+The resulting `ensemble_return` remains a continuous predicted future return, not a probability, trading signal, position recommendation, or expected P&L.
+
+Integration tests verify compatibility with the real Random Forest, XGBoost, and LightGBM regressors, including preservation of their horizon-specific prediction contracts.
+
 ## Tecnologias inicialmente previstas
 
 ### Backend
