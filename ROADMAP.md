@@ -186,7 +186,7 @@ Legenda:
 # Phase 10 — Paper Trading
 
 * [x] Create position simulator
-* [ ] Register simulated entries
+* [x] Register simulated entries
 * [ ] Register simulated exits
 * [ ] Simulate fees
 * [ ] Simulate slippage
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Register simulated entries.
+Register simulated exits.
