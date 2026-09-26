@@ -1536,6 +1536,32 @@ If position validation fails, the invalid position is not registered and the sim
 
 Entry registration remains simulation-only. It does not execute exchange orders, communicate with Binance, calculate fees or slippage, close positions, calculate P&L, or persist the position to a database.
 
+### Simulated Exits
+
+`PositionSimulator` can close the currently open simulated position by registering a simulated exit.
+
+A simulated exit is represented by the immutable `SimulatedExit` domain object, which preserves:
+
+- the original `SimulatedPosition`
+- `exit_price`
+- `exit_timestamp`
+
+The exit price must be a finite positive numeric value. The exit timestamp must be an integer and cannot occur before the original position entry timestamp. An exit at the same timestamp as the entry is allowed because the simulator does not impose an arbitrary minimum holding duration.
+
+A simulated exit can only be registered when a position is currently open. After a valid exit is registered:
+
+- the resulting `SimulatedExit` references the original open position
+- `current_position` becomes `None`
+- `has_open_position` becomes `False`
+- the resulting `SimulatedExit` is returned to the caller
+- a new simulated entry can subsequently be registered
+
+Exit validation is completed before the current position is cleared. If exit validation fails, the original position remains open and unchanged.
+
+The exit layer records only the simulated closing price and timestamp. It does not yet calculate fees, slippage, realized P&L, ROI, leverage, capital performance, or other trading performance metrics.
+
+Simulated exits do not execute exchange orders or communicate with live trading APIs.
+
 ## Tecnologias inicialmente previstas
 
 ### Backend
