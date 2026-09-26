@@ -874,6 +874,69 @@ A responsabilidade do `FeatureRegistry` é somente preservar, em memória e na o
 
 A imutabilidade de cada `FeatureSnapshot` continua sendo responsabilidade do próprio snapshot, enquanto o registry protege sua coleção interna ao não expor a lista mutável utilizada para armazenamento.
 
+#### Prediction Outcome
+
+O componente `PredictionOutcome` representa o resultado observado de uma previsão após um horizonte futuro definido.
+
+O outcome preserva:
+
+* `symbol`;
+* `prediction_timestamp`;
+* `reference_price`;
+* `horizon_minutes`;
+* `evaluation_timestamp`;
+* `evaluation_price`.
+
+O campo `future_return` é derivado diretamente dos preços:
+
+`future_return = evaluation_price / reference_price - 1`
+
+O retorno futuro não é recebido como entrada independente, evitando estados inconsistentes entre preços observados e retorno registrado.
+
+Para o outcome:
+
+* `symbol` identifica o ativo avaliado;
+* `prediction_timestamp` representa o instante original da previsão;
+* `reference_price` representa o preço conhecido no instante da previsão;
+* `horizon_minutes` representa o horizonte futuro avaliado;
+* `evaluation_timestamp` representa o instante da observação futura;
+* `evaluation_price` representa o preço observado nessa avaliação;
+* `future_return` preserva o retorno contínuo observado entre o preço de referência e o preço de avaliação.
+
+O `evaluation_timestamp` não pode ocorrer antes de:
+
+`prediction_timestamp + horizon_minutes * 60_000`
+
+A avaliação pode ocorrer exatamente no horizonte ou depois dele. O contrato não exige uma observação disponível exatamente no milissegundo-alvo, evitando acoplamento prematuro à resolução ou à fonte dos dados de mercado.
+
+O `PredictionOutcome` registra o que aconteceu no mercado e não classifica a previsão como correta ou incorreta. Ele não define thresholds, categorias direcionais, probabilidades, lucro/prejuízo, taxas, alavancagem ou sinais de trading.
+
+A comparação entre `direction_score` e `future_return` pertence à futura etapa de cálculo de métricas.
+
+#### Outcome Evaluator
+
+O componente `OutcomeEvaluator` cria um `PredictionOutcome` a partir de um `PredictionRecord` e de uma observação futura.
+
+O evaluator reutiliza diretamente da previsão:
+
+* `symbol`;
+* `prediction_timestamp`;
+* `reference_price`.
+
+A avaliação fornece:
+
+* `horizon_minutes`;
+* `evaluation_timestamp`;
+* `evaluation_price`.
+
+O `OutcomeEvaluator` aceita somente instâncias de `PredictionRecord` e delega ao `PredictionOutcome` as validações relacionadas ao horizonte, timestamps e preços.
+
+O evaluator não consulta diretamente fontes de mercado e não calcula métricas de acerto. Sua responsabilidade é transformar uma previsão existente e uma observação futura em um outcome validado.
+
+Para o horizonte inicial de 1 minuto, essa estrutura permite avaliar uma previsão somente quando a observação ocorre em `t0 + 1 minuto` ou depois desse limite.
+
+A mesma estrutura permanece reutilizável para os horizontes posteriores de 5, 15 e 30 minutos sem criar modelos de outcome específicos para cada horizonte.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
