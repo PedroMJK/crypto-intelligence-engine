@@ -138,7 +138,7 @@ Legenda:
   * [x] Define immutable feature snapshot
   * [x] Add in-memory feature registry
 * [x] Evaluate result after 1 minute
-* [ ] Evaluate result after 5 minutes
+* [x] Evaluate result after 5 minutes
 * [ ] Evaluate result after 15 minutes
 * [ ] Evaluate result after 30 minutes
 * [ ] Calculate metrics
@@ -222,4 +222,4 @@ Legenda:
 
 # Current Task
 
-Evaluate result after 5 minutes.
+Evaluate result after 15 minutes.

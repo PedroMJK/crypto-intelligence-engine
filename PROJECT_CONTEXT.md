@@ -933,9 +933,18 @@ O `OutcomeEvaluator` aceita somente instâncias de `PredictionRecord` e delega a
 
 O evaluator não consulta diretamente fontes de mercado e não calcula métricas de acerto. Sua responsabilidade é transformar uma previsão existente e uma observação futura em um outcome validado.
 
-Para o horizonte inicial de 1 minuto, essa estrutura permite avaliar uma previsão somente quando a observação ocorre em `t0 + 1 minuto` ou depois desse limite.
+Para o horizonte de 1 minuto, essa estrutura permite avaliar uma previsão somente quando a observação ocorre em `t0 + 1 minuto` ou depois desse limite.
 
-A mesma estrutura permanece reutilizável para os horizontes posteriores de 5, 15 e 30 minutos sem criar modelos de outcome específicos para cada horizonte.
+O mesmo contrato foi validado explicitamente para o horizonte de 5 minutos. Nesse horizonte:
+
+* uma avaliação anterior a `t0 + 300_000 ms` é rejeitada;
+* uma avaliação exatamente em `t0 + 300_000 ms` é aceita;
+* uma avaliação posterior ao limite também é aceita;
+* `future_return` continua sendo derivado dos preços de referência e avaliação.
+
+A validação do horizonte de 5 minutos não exige alterações adicionais no código de produção, confirmando que `PredictionOutcome` e `OutcomeEvaluator` permanecem independentes de um horizonte específico.
+
+A mesma estrutura permanece reutilizável para os horizontes posteriores de 15 e 30 minutos sem criar modelos de outcome específicos para cada horizonte.
 
 ### Machine Learning
 

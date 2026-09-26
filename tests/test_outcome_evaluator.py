@@ -110,3 +110,52 @@ def test_outcome_evaluator_delegates_outcome_validation():
             evaluation_timestamp=1_800_000_059_999,
             evaluation_price=0.51,
         )
+
+
+def test_outcome_evaluator_creates_five_minute_outcome():
+    prediction = create_prediction(
+        prediction_timestamp=1_800_000_000_000,
+        reference_price=0.50,
+    )
+
+    outcome = OutcomeEvaluator.evaluate(
+        prediction=prediction,
+        horizon_minutes=5,
+        evaluation_timestamp=1_800_000_300_000,
+        evaluation_price=0.525,
+    )
+
+    assert outcome.horizon_minutes == 5
+    assert outcome.evaluation_timestamp == 1_800_000_300_000
+    assert outcome.evaluation_price == 0.525
+    assert outcome.future_return == pytest.approx(0.05)
+
+
+def test_outcome_evaluator_rejects_five_minute_evaluation_before_horizon():
+    prediction = create_prediction(
+        prediction_timestamp=1_800_000_000_000,
+    )
+
+    with pytest.raises(ValueError):
+        OutcomeEvaluator.evaluate(
+            prediction=prediction,
+            horizon_minutes=5,
+            evaluation_timestamp=1_800_000_299_999,
+            evaluation_price=0.51,
+        )
+
+
+def test_outcome_evaluator_accepts_five_minute_evaluation_after_horizon():
+    prediction = create_prediction(
+        prediction_timestamp=1_800_000_000_000,
+    )
+
+    outcome = OutcomeEvaluator.evaluate(
+        prediction=prediction,
+        horizon_minutes=5,
+        evaluation_timestamp=1_800_000_300_500,
+        evaluation_price=0.51,
+    )
+
+    assert outcome.horizon_minutes == 5
+    assert outcome.evaluation_timestamp == 1_800_000_300_500
