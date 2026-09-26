@@ -1,4 +1,5 @@
 from backend.app.paper_trading.position_side import PositionSide
+from backend.app.paper_trading.simulated_exit import SimulatedExit
 from backend.app.paper_trading.simulated_position import (
     SimulatedPosition,
 )
@@ -44,3 +45,23 @@ class PositionSimulator:
         self._current_position = position
 
         return position
+
+    def register_exit(
+        self,
+        exit_price: float,
+        exit_timestamp: int,
+    ) -> SimulatedExit:
+        if self._current_position is None:
+            raise RuntimeError(
+                "no open position exists"
+            )
+
+        simulated_exit = SimulatedExit(
+            position=self._current_position,
+            exit_price=exit_price,
+            exit_timestamp=exit_timestamp,
+        )
+
+        self._current_position = None
+
+        return simulated_exit

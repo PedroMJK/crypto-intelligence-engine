@@ -7,6 +7,7 @@ from backend.app.paper_trading.position_simulator import (
 from backend.app.paper_trading.simulated_position import (
     SimulatedPosition,
 )
+from backend.app.paper_trading.simulated_exit import SimulatedExit
 
 
 def test_position_side_defines_long_and_short():
@@ -466,3 +467,162 @@ def test_position_simulator_reuses_position_validation_for_entries(
 
     assert simulator.current_position is None
     assert simulator.has_open_position is False
+
+def test_position_simulator_registers_simulated_exit():
+    simulator = PositionSimulator()
+
+    position = simulator.register_entry(
+        symbol="BTCUSDT",
+        side=PositionSide.LONG,
+        quantity=0.5,
+        entry_price=50_000.0,
+        entry_timestamp=1_700_000_000_000,
+    )
+
+    simulated_exit = simulator.register_exit(
+        exit_price=51_000.0,
+        exit_timestamp=1_700_000_060_000,
+    )
+
+    assert isinstance(
+        simulated_exit,
+        SimulatedExit,
+    )
+    assert simulated_exit.position is position
+    assert simulated_exit.exit_price == 51_000.0
+    assert (
+        simulated_exit.exit_timestamp
+        == 1_700_000_060_000
+    )
+
+
+def test_registered_exit_clears_current_position():
+    simulator = PositionSimulator()
+
+    simulator.register_entry(
+        symbol="BTCUSDT",
+        side=PositionSide.LONG,
+        quantity=0.5,
+        entry_price=50_000.0,
+        entry_timestamp=1_700_000_000_000,
+    )
+
+    simulator.register_exit(
+        exit_price=51_000.0,
+        exit_timestamp=1_700_000_060_000,
+    )
+
+    assert simulator.current_position is None
+    assert simulator.has_open_position is False
+
+
+def test_position_simulator_rejects_exit_without_open_position():
+    simulator = PositionSimulator()
+
+    with pytest.raises(
+        RuntimeError,
+        match="no open position exists",
+    ):
+        simulator.register_exit(
+            exit_price=51_000.0,
+            exit_timestamp=1_700_000_060_000,
+        )
+
+    assert simulator.current_position is None
+    assert simulator.has_open_position is False
+
+
+@pytest.mark.parametrize(
+    (
+        "exit_price",
+        "exit_timestamp",
+        "expected_exception",
+        "expected_message",
+    ),
+    [
+        (
+            0.0,
+            1_700_000_060_000,
+            ValueError,
+            "exit_price must be finite and greater than zero",
+        ),
+        (
+            "51000",
+            1_700_000_060_000,
+            TypeError,
+            "exit_price must be a number",
+        ),
+        (
+            51_000.0,
+            "1700000060000",
+            TypeError,
+            "exit_timestamp must be an int",
+        ),
+        (
+            51_000.0,
+            1_699_999_999_999,
+            ValueError,
+            (
+                "exit_timestamp must not be "
+                "before entry_timestamp"
+            ),
+        ),
+    ],
+)
+def test_failed_exit_preserves_open_position(
+    exit_price,
+    exit_timestamp,
+    expected_exception,
+    expected_message,
+):
+    simulator = PositionSimulator()
+
+    position = simulator.register_entry(
+        symbol="BTCUSDT",
+        side=PositionSide.LONG,
+        quantity=0.5,
+        entry_price=50_000.0,
+        entry_timestamp=1_700_000_000_000,
+    )
+
+    with pytest.raises(
+        expected_exception,
+        match=expected_message,
+    ):
+        simulator.register_exit(
+            exit_price=exit_price,
+            exit_timestamp=exit_timestamp,
+        )
+
+    assert simulator.current_position is position
+    assert simulator.has_open_position is True
+
+
+def test_position_simulator_can_register_new_entry_after_exit():
+    simulator = PositionSimulator()
+
+    simulator.register_entry(
+        symbol="BTCUSDT",
+        side=PositionSide.LONG,
+        quantity=0.5,
+        entry_price=50_000.0,
+        entry_timestamp=1_700_000_000_000,
+    )
+
+    simulator.register_exit(
+        exit_price=51_000.0,
+        exit_timestamp=1_700_000_060_000,
+    )
+
+    new_position = simulator.register_entry(
+        symbol="ETHUSDT",
+        side=PositionSide.SHORT,
+        quantity=2.0,
+        entry_price=3_000.0,
+        entry_timestamp=1_700_000_120_000,
+    )
+
+    assert simulator.current_position is new_position
+    assert simulator.has_open_position is True
+    assert new_position.symbol == "ETHUSDT"
+    assert new_position.side is PositionSide.SHORT
