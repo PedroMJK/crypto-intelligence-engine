@@ -173,7 +173,7 @@ Legenda:
 * [x] Create feature pipeline
 * [x] Prepare dataset
 * [x] Split training/validation/test datasets
-* [ ] Create baseline
+* [x] Create baseline
 * [ ] Random Forest
 * [ ] XGBoost
 * [ ] LightGBM

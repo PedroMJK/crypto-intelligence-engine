@@ -1377,6 +1377,31 @@ No scaling, model training, probability calibration, trading threshold, BUY/SELL
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
 
+### Mean Return Baseline
+
+The initial machine learning baseline is a regression baseline that predicts the mean training target independently for each `horizon_minutes`.
+
+The baseline:
+
+- fits only on `MLDataset` training samples;
+- learns one mean `future_return` per observed horizon;
+- keeps horizons independent instead of mixing their targets;
+- rejects prediction before fitting;
+- rejects horizons that were not observed during training;
+- does not create directional classes, probabilities, thresholds, or trading signals.
+
+Baseline evaluation is performed without refitting on validation or test data. `MeanReturnBaselineEvaluator` groups evaluation samples by `horizon_minutes`, uses the mean learned from the training dataset, and calculates regression metrics independently for each horizon.
+
+The initial regression metrics are:
+
+- MAE — Mean Absolute Error;
+- MSE — Mean Squared Error;
+- RMSE — Root Mean Squared Error.
+
+`RegressionMetricsCalculator` is independent from the baseline so the same metric definitions can be reused by future machine learning models.
+
+The baseline establishes a simple reference for determining whether later models provide predictive value beyond the historical mean training return for each horizon.
+
 ## Tecnologias inicialmente previstas
 
 ### Backend
