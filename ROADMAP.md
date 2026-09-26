@@ -177,7 +177,7 @@ Legenda:
 * [x] Random Forest
 * [x] XGBoost
 * [x] LightGBM
-* [ ] Probability calibration
+* [x] Probability calibration
 * [ ] Compare with traditional rules
 * [ ] Create ensemble
 
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Probability calibration.
+Compare with traditional rules.
