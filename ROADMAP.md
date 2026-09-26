@@ -152,7 +152,9 @@ Legenda:
 
 # Phase 8 — Backtesting
 
-* [ ] Create dataset
+* [x] Create dataset
+  * [x] Define immutable backtest sample
+  * [x] Define immutable backtest dataset
 * [ ] Create simulator
 * [ ] Prevent look-ahead bias
 * [ ] Calculate accuracy
@@ -226,4 +228,4 @@ Legenda:
 
 # Current Task
 
-Create dataset.
+Create simulator.
