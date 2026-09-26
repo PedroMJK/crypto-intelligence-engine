@@ -189,7 +189,7 @@ Legenda:
 * [x] Register simulated entries
 * [x] Register simulated exits
 * [x] Simulate fees
-* [ ] Simulate slippage
+* [x] Simulate slippage
 * [ ] Create performance metrics
 
 ---
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Simulate slippage.
+Create performance metrics.

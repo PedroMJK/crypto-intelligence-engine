@@ -1591,6 +1591,43 @@ The fee simulator calculates transaction costs independently and does not mutate
 
 Fee simulation does not yet calculate slippage, realized P&L, ROI, leverage, capital performance, aggregate trade costs, or other performance metrics. It also does not execute exchange orders or communicate with live trading APIs.
 
+### Simulated Slippage
+
+Paper Trading can simulate adverse execution price movement through the stateless `SlippageSimulator`.
+
+The generic slippage calculation adjusts a reference market price according to the simulated execution side:
+
+- BUY execution: `price * (1 + slippage_rate)`
+- SELL execution: `price * (1 - slippage_rate)`
+
+The slippage rate is supplied explicitly to the simulator rather than being hardcoded to a specific exchange, market, asset, order book condition, or execution model.
+
+The generic calculation requires:
+
+- `price` to be a finite positive numeric value
+- `slippage_rate` to be a finite numeric value greater than or equal to zero and lower than one
+- `is_buy` to be a boolean value
+
+A zero slippage rate is valid and preserves the original reference price.
+
+`SlippageSimulator` integrates the generic calculation with the Paper Trading domain through:
+
+- `calculate_entry_price()`, which derives the simulated entry execution side from `SimulatedPosition`
+- `calculate_exit_price()`, which derives the opposite closing execution side from `SimulatedExit`
+
+Execution direction follows the simulated position lifecycle:
+
+- LONG entry is a BUY and receives upward adverse slippage
+- LONG exit is a SELL and receives downward adverse slippage
+- SHORT entry is a SELL and receives downward adverse slippage
+- SHORT exit is a BUY and receives upward adverse slippage
+
+The simulator therefore models slippage as adverse execution rather than automatically improving the simulated trade price.
+
+Slippage calculation does not mutate `SimulatedPosition` or `SimulatedExit`. Their original reference prices remain unchanged, while `SlippageSimulator` returns the adjusted simulated execution price.
+
+The slippage layer does not yet calculate realized P&L, ROI, leverage, capital performance, aggregate trade costs, or other performance metrics. It also does not estimate real market impact from an order book, execute exchange orders, or communicate with live trading APIs.
+
 ## Tecnologias inicialmente previstas
 
 ### Backend
