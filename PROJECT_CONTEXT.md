@@ -854,6 +854,26 @@ Somente informações disponíveis até `feature_timestamp` podem compor o snaps
 
 Estruturas complexas produzidas pelos motores de análise não são armazenadas diretamente neste primeiro contrato. Quando necessário, propriedades escalares semanticamente definidas poderão ser extraídas dessas estruturas e registradas como features.
 
+#### Feature Registry
+
+O componente `FeatureRegistry` mantém em memória os snapshots de features registrados pelo Prediction Lab.
+
+O registry:
+
+* aceita somente instâncias de `FeatureSnapshot`;
+* preserva a ordem de registro dos snapshots;
+* não reordena snapshots por `feature_timestamp`;
+* expõe os snapshots registrados como uma `tuple`;
+* permite o registro repetido do mesmo snapshot;
+* não cria identidade, UUID ou chave artificial;
+* não realiza deduplicação;
+* não implementa filtros ou mecanismos de busca;
+* não realiza persistência em banco de dados.
+
+A responsabilidade do `FeatureRegistry` é somente preservar, em memória e na ordem de inserção, os snapshots de features capturados pelo Prediction Lab.
+
+A imutabilidade de cada `FeatureSnapshot` continua sendo responsabilidade do próprio snapshot, enquanto o registry protege sua coleção interna ao não expor a lista mutável utilizada para armazenamento.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
