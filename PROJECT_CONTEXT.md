@@ -1337,6 +1337,30 @@ A comparação também não introduz probabilidades, sinais de BUY/SELL, recomen
 
 ### Machine Learning
 
+#### Temporal Dataset Split
+
+The machine learning dataset can be split into training, validation, and test partitions using `TemporalDatasetSplitter`.
+
+The split is chronological and preserves the original sample order. The splitter does not shuffle, sort, deduplicate, or group samples automatically.
+
+Split ratios are explicitly provided by the caller and must:
+
+- be numeric, finite, and greater than zero;
+- sum to `1.0`;
+- produce non-empty training, validation, and test partitions.
+
+The dataset must already be in chronological order by `FeatureSnapshot.feature_timestamp`. Equal feature timestamps are allowed within the same partition, supporting simultaneous samples such as different symbols or horizons, but the same feature timestamp cannot cross a train/validation or validation/test boundary.
+
+`DatasetSplit` represents the immutable split result with three `MLDataset` partitions:
+
+- `train`
+- `validation`
+- `test`
+
+The splitter performs chronological feature-time separation. Future outcomes remain supervised-learning targets and are never input features. This split alone does not claim to implement target-window purging or embargoing for overlapping future-label horizons; those concerns must be handled explicitly when defining leakage-safe model evaluation.
+
+No scaling, model training, probability calibration, trading threshold, BUY/SELL decision, or execution behavior is introduced by this component.
+
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
 
 ## Tecnologias inicialmente previstas
