@@ -1060,6 +1060,51 @@ Com isso, o fluxo estatístico do Prediction Lab passa a ser:
 
 Métricas classificatórias como accuracy, precision, recall e confusion matrix permanecem responsabilidade da fase de Backtesting.
 
+### Backtesting
+
+Responsável por avaliar historicamente o comportamento do sistema a partir de observações registradas, preservando a separação temporal entre informações disponíveis no momento da previsão e resultados observados posteriormente.
+
+#### Backtest Sample
+
+O componente `BacktestSample` representa uma observação histórica imutável utilizada pelo Backtesting.
+
+Cada amostra associa:
+
+* um `FeatureSnapshot`, contendo as features disponíveis no momento de referência;
+* um `PredictionRecord`, contendo a hipótese direcional registrada naquele mesmo momento;
+* um `PredictionOutcome`, contendo o resultado de mercado observado posteriormente para um horizonte específico.
+
+Para que os componentes representem a mesma observação histórica:
+
+* `FeatureSnapshot.symbol`, `PredictionRecord.symbol` e `PredictionOutcome.symbol` devem corresponder;
+* `FeatureSnapshot.feature_timestamp` deve corresponder a `PredictionRecord.prediction_timestamp`;
+* `PredictionRecord.prediction_timestamp` deve corresponder a `PredictionOutcome.prediction_timestamp`;
+* `PredictionRecord.reference_price` deve corresponder a `PredictionOutcome.reference_price`.
+
+O `PredictionOutcome` permanece separado das features e representa informação futura utilizada somente para avaliação histórica.
+
+O `BacktestSample` não calcula métricas, não classifica previsões como corretas ou incorretas, não gera sinais de trading e não executa simulações.
+
+#### Backtest Dataset
+
+O componente `BacktestDataset` representa uma coleção histórica imutável e não vazia de registros `BacktestSample`.
+
+O dataset:
+
+* aceita somente coleções `list` ou `tuple`;
+* aceita somente instâncias de `BacktestSample`;
+* converte defensivamente a coleção recebida para uma `tuple`;
+* preserva a ordem das amostras recebidas;
+* preserva amostras repetidas;
+* pode conter múltiplos símbolos;
+* pode conter múltiplos horizontes de avaliação.
+
+Nesta camada, o dataset não reordena observações por timestamp, não remove duplicatas, não agrupa símbolos ou horizontes e não executa lógica de simulação.
+
+A presença de um outcome futuro dentro de uma amostra não o torna informação disponível para a geração das features ou da previsão. A separação entre dados disponíveis em `t0` e resultados conhecidos posteriormente deve ser preservada pelos componentes de Backtesting.
+
+Controles adicionais de execução temporal e prevenção explícita de look-ahead bias permanecem responsabilidade das etapas posteriores da fase de Backtesting.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
