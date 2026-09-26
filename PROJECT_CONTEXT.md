@@ -1158,6 +1158,30 @@ A proteção fornecida nesta camada é temporal. O Guard não tenta inferir sema
 
 A presença de `PredictionOutcome` no `BacktestSample` existe exclusivamente para avaliação histórica e não torna o outcome disponível para a geração do `FeatureSnapshot` ou do `PredictionRecord`.
 
+#### Accuracy Calculator
+
+O componente `AccuracyCalculator` calcula a acurácia direcional histórica a partir de uma coleção de `PredictionMetrics`.
+
+A classificação utiliza exclusivamente o sinal de `directional_alignment`, sem introduzir thresholds arbitrários de magnitude:
+
+* `directional_alignment > 0` representa uma observação direcional alinhada;
+* `directional_alignment < 0` representa uma observação direcional oposta;
+* `directional_alignment == 0` representa uma observação neutra e não entra no denominador da acurácia.
+
+A métrica é calculada como:
+
+`accuracy = aligned / (aligned + opposed)`
+
+O resultado pertence ao intervalo `[0, 1]`.
+
+Observações com `direction_score == 0` ou `future_return == 0` produzem `directional_alignment == 0` e são excluídas do cálculo da acurácia.
+
+O componente aceita coleções `list` ou `tuple` de `PredictionMetrics`, pode avaliar múltiplos símbolos e horizontes na coleção recebida e não realiza agrupamento ou filtragem automática.
+
+Uma coleção vazia é inválida. Quando a coleção contém apenas observações neutras, a acurácia é considerada indefinida pelo contrato atual e o componente gera `ValueError`.
+
+O `AccuracyCalculator` não recalcula `directional_alignment`, não introduz classificação de trading e não interpreta `direction_score`, `confidence` ou qualquer outra métrica como probabilidade.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.
