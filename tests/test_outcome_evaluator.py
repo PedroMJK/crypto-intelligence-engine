@@ -1,0 +1,112 @@
+import pytest
+
+from backend.app.predictions.outcome_evaluator import OutcomeEvaluator
+from backend.app.predictions.prediction_outcome import PredictionOutcome
+from backend.app.predictions.prediction_record import PredictionRecord
+
+
+def create_prediction(**overrides):
+    values = {
+        "symbol": "FETUSDT",
+        "prediction_timestamp": 1_800_000_000_000,
+        "reference_price": 0.50,
+        "direction_score": 0.65,
+    }
+    values.update(overrides)
+
+    return PredictionRecord(**values)
+
+
+def test_outcome_evaluator_creates_prediction_outcome():
+    prediction = create_prediction()
+
+    outcome = OutcomeEvaluator.evaluate(
+        prediction=prediction,
+        horizon_minutes=1,
+        evaluation_timestamp=1_800_000_060_000,
+        evaluation_price=0.51,
+    )
+
+    assert isinstance(outcome, PredictionOutcome)
+
+
+def test_outcome_evaluator_preserves_prediction_identity_data():
+    prediction = create_prediction()
+
+    outcome = OutcomeEvaluator.evaluate(
+        prediction=prediction,
+        horizon_minutes=1,
+        evaluation_timestamp=1_800_000_060_000,
+        evaluation_price=0.51,
+    )
+
+    assert outcome.symbol == prediction.symbol
+    assert (
+        outcome.prediction_timestamp
+        == prediction.prediction_timestamp
+    )
+    assert outcome.reference_price == prediction.reference_price
+
+
+def test_outcome_evaluator_preserves_evaluation_data():
+    prediction = create_prediction()
+
+    outcome = OutcomeEvaluator.evaluate(
+        prediction=prediction,
+        horizon_minutes=1,
+        evaluation_timestamp=1_800_000_060_500,
+        evaluation_price=0.51,
+    )
+
+    assert outcome.horizon_minutes == 1
+    assert outcome.evaluation_timestamp == 1_800_000_060_500
+    assert outcome.evaluation_price == 0.51
+
+
+def test_outcome_evaluator_returns_calculated_future_return():
+    prediction = create_prediction(
+        reference_price=0.50,
+    )
+
+    outcome = OutcomeEvaluator.evaluate(
+        prediction=prediction,
+        horizon_minutes=1,
+        evaluation_timestamp=1_800_000_060_000,
+        evaluation_price=0.51,
+    )
+
+    assert outcome.future_return == pytest.approx(0.02)
+
+
+@pytest.mark.parametrize(
+    "prediction",
+    [
+        None,
+        {},
+        "FETUSDT",
+        123,
+        True,
+    ],
+)
+def test_outcome_evaluator_rejects_non_prediction_record(
+    prediction,
+):
+    with pytest.raises(TypeError):
+        OutcomeEvaluator.evaluate(
+            prediction=prediction,
+            horizon_minutes=1,
+            evaluation_timestamp=1_800_000_060_000,
+            evaluation_price=0.51,
+        )
+
+
+def test_outcome_evaluator_delegates_outcome_validation():
+    prediction = create_prediction()
+
+    with pytest.raises(ValueError):
+        OutcomeEvaluator.evaluate(
+            prediction=prediction,
+            horizon_minutes=1,
+            evaluation_timestamp=1_800_000_059_999,
+            evaluation_price=0.51,
+        )
