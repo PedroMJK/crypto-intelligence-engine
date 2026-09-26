@@ -1402,6 +1402,44 @@ The initial regression metrics are:
 
 The baseline establishes a simple reference for determining whether later models provide predictive value beyond the historical mean training return for each horizon.
 
+### Random Forest Regressor
+
+The first trained machine learning model is a Random Forest regression model implemented with `scikit-learn`.
+
+The model preserves the continuous regression target:
+
+- input `X` comes exclusively from `FeatureSnapshot.features`;
+- target `y` remains the continuous `future_return`;
+- no UP/DOWN classes, probability estimates, thresholds, BUY/SELL signals, or trading actions are introduced.
+
+`RandomForestReturnRegressor` trains one independent `RandomForestRegressor` per `horizon_minutes`. Horizons are therefore kept explicit instead of silently mixing targets from different prediction windows into the same model.
+
+The feature schema is learned from the training dataset by feature name. Feature names are stored in deterministic sorted order so mapping insertion order does not affect the model input. All training samples must expose the same feature schema, and prediction snapshots must match the schema used during training.
+
+The following metadata is intentionally excluded from the model feature vector:
+
+- `symbol`;
+- `feature_timestamp`;
+- `target`;
+- `target_timestamp`;
+- `horizon_minutes`.
+
+`horizon_minutes` selects the independently trained model and is not treated as an input feature.
+
+The model validates its exposed `n_estimators` and `random_state` configuration and rejects prediction before fitting or prediction for horizons that were not observed during training.
+
+`RandomForestReturnRegressorEvaluator` evaluates an already fitted model without retraining it. Validation and test samples are passed through the model using each sample's own feature snapshot and horizon.
+
+Evaluation remains independent per horizon and reuses the shared regression metrics:
+
+- MAE;
+- MSE;
+- RMSE.
+
+This preserves the train/validation/test boundary and allows Random Forest performance to be compared with the Mean Return Baseline using the same continuous target and metric definitions.
+
+The implementation uses `scikit-learn==1.9.1`.
+
 ## Tecnologias inicialmente previstas
 
 ### Backend
