@@ -1230,6 +1230,24 @@ O resultado pertence ao intervalo `[0, 1]`.
 
 O cálculo não introduz thresholds arbitrários, não interpreta `direction_score` como probabilidade e não produz sinais ou recomendações de trading.
 
+#### Recall Calculator
+
+O componente `RecallCalculator` calcula o recall das previsões direcionais positivas utilizando a classificação produzida pelo `DirectionalClassifier`.
+
+A métrica é definida como:
+
+`recall = true_positive / (true_positive + false_negative)`
+
+False positives, true negatives e observações neutras não participam do cálculo do recall.
+
+O `RecallCalculator` delega a classificação ao `DirectionalClassifier` e não redefine as regras de TP, FP, TN ou FN. Dessa forma, precision, recall e as futuras métricas baseadas em classificação compartilham exatamente o mesmo contrato classificatório.
+
+Quando `true_positive + false_negative == 0`, não existem observações positivas classificáveis. Nesse caso, recall é considerado indefinido pelo contrato atual e o componente gera `ValueError`.
+
+O resultado pertence ao intervalo `[0, 1]`.
+
+O cálculo não introduz thresholds arbitrários, não interpreta `direction_score` como probabilidade e não produz sinais ou recomendações de trading.
+
 ### Machine Learning
 
 Será adicionado somente após a coleta de dados suficientes e validação da qualidade dos dados.

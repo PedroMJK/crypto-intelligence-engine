@@ -162,7 +162,7 @@ Legenda:
   * [x] Integrate guard into backtest simulator
 * [x] Calculate accuracy
 * [x] Calculate precision
-* [ ] Calculate recall
+* [x] Calculate recall
 * [ ] Calculate confusion matrix
 * [ ] Compare models
 
@@ -231,4 +231,4 @@ Legenda:
 
 # Current Task
 
-Calculate recall.
+Calculate confusion matrix.
